@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "logs-collector"
+version = "0.1.0"
+description = "Server side for receiving and storing log files"
+authors = ["MOIS3Y <s.zhukovskii@ispsystem.com>"]
+readme = "README.md"
+packages = [{include = "logs_collector"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "4.2"
+djangorestframework = "^3.14.0"
+djangorestframework-simplejwt = "^5.2.2"
+django-environ = "^0.10.0"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
