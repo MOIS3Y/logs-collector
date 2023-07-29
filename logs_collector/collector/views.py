@@ -21,6 +21,7 @@ class ListAllTickets(generic.ListView):
     model = Ticket
     template_name = 'collector/tickets.html'
     context_object_name = 'tickets'
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -33,6 +34,7 @@ class ListPlatformTickets(generic.ListView):
     template_name = 'collector/tickets.html'
     context_object_name = 'tickets'
     allow_empty = False
+    paginate_by = 5
 
     def get_queryset(self):
         return Ticket.objects.filter(

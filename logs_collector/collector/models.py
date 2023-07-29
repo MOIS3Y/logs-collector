@@ -82,6 +82,9 @@ class Ticket(models.Model):
     platform = models.ForeignKey('Platform', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['-time_update']
+
     def get_absolute_url(self):
         return reverse(
             'ticket',
