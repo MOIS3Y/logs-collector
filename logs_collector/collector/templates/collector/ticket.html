@@ -47,7 +47,7 @@
                     >GET</a>
                     <button
                     class="btn btn-outline-danger btn-sm ms-2 mt-2"
-                    button type="button" data-bs-toggle="modal" data-bs-target="#{{ archive.id }}"
+                    button type="button" data-bs-toggle="modal" data-bs-target="#modal-archive-del-{{ archive.id }}"
                     >DEL</button>
                   </div>
                 </div>
@@ -71,11 +71,11 @@
       </div>
       <!-- Modal -->
       {% for archive in ticket.archive_set.all %}
-      <div class="modal fade" id="{{ archive.id }}" tabindex="-1" aria-labelledby="{{ archive.id }}_Label" aria-hidden="true">
+      <div class="modal fade" id="modal-archive-del-{{ archive.id }}" tabindex="-1" aria-labelledby="LabelArchive-{{ archive.id }}" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="{{ archive.id }}_Label">Delete this file?</h5>
+              <h5 class="modal-title" id="LabelArchive-{{ archive.id }}">Delete this file?</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

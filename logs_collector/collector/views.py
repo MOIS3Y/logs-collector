@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import FileResponse, Http404
 from django.views import generic
 
+from rest_framework import status
+from rest_framework.response import Response
+
 from .models import Archive, Ticket, Platform
 
 
@@ -15,6 +18,24 @@ def download(request, path):
         return Http404
 
     return FileResponse(file.file)
+
+
+class ArchiveHandlerView(generic.View):
+    def get(self, request, path):
+        try:
+            file = Archive.objects.get(file=path)
+        except Archive.DoesNotExist:
+            return Http404
+        return FileResponse(file.file)
+
+    def delete(self, request, path):
+        content = {'file': path}
+        try:
+            file = Archive.objects.get(file=path)
+            file.delete()
+            return Response(content, status=status.HTTP_200_OK)
+        except Archive.DoesNot.Exist:
+            return Response(content, status=status.HTTP_204_NO_CONTENT)
 
 
 class ListAllTickets(generic.ListView):

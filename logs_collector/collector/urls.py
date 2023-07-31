@@ -24,5 +24,9 @@ urlpatterns = [
         views.DetailTicket.as_view(),
         name='ticket'
     ),
-    path('archives/<path:path>', views.download, name="download")
+    path(
+        'archives/<path:path>',
+        views.ArchiveHandlerView.as_view(),
+        name="download"
+    ),
 ]
