@@ -16,3 +16,8 @@ def get_file_size(file_path, unit='bytes'):
     else:
         size = file_size / 1024 ** exponents_map[unit]
         return round(size, 3)
+
+
+def is_ajax(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return True

@@ -14,12 +14,13 @@
               <small><i class="bi bi-clock-history"></i> {{ ticket.time_create }}</small>
             </div>
             <div class="form-check form-switch form-check-reverse d-flex w-100 justify-content-left">
-              <label class="form-check-label" for="ticket-state-{{ ticket.number }}">Resolved:</label>
+              <label class="form-check-label" for="ticket-state">Resolved:</label>
               <input 
                 class="form-check-input ms-2 mb-2"
                 type="checkbox"
                 role="switch"
-                id="ticket-state-{{ ticket.number }}" 
+                id="ticket-state"
+                ticket-state-url="{% url 'ticket' ticket.platform ticket.number %}"
                 {% if ticket.resolved %} checked {% endif %}>
             </div>
             <div class="col-xl-6 mb-2">
@@ -54,7 +55,12 @@
                         <b>SHA1:</b>
                         <span style="word-wrap: break-word">{{ archive.sha1 }}</span>
                       </small>
-                      <br>
+                      <small>
+                        <br>
+                        <b>Uploaded:</b>
+                        <span style="word-wrap: break-word">{{ archive.time_update }}</span>
+                      </small>
+                        <br>
                       <small>
                         <b>Size:</b>
                         <span style="word-wrap: break-word">{{ archive.size }}</span>
@@ -128,5 +134,5 @@
 </main>
 {% endblock content %}
 {% block jquery %}
-  <script src="{% static 'collector/js/jq.delete.archive.js' %}"></script>
+  <script src="{% static 'collector/js/jq.ticket.detail.js' %}"></script>
 {% endblock jquery %}

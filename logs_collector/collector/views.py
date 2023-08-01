@@ -1,4 +1,6 @@
+import json
 # from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse, JsonResponse, Http404
 from django.views import generic
 
@@ -6,9 +8,10 @@ from rest_framework import status
 # from rest_framework.response import Response
 
 from .models import Archive, Ticket, Platform
+from .utils import is_ajax
 
 
-class ArchiveHandlerView(generic.View):
+class ArchiveHandlerView(LoginRequiredMixin, generic.View):
     def get(self, request, path):
         try:
             file = Archive.objects.get(file=path)
@@ -72,8 +75,21 @@ class DetailTicket(generic.DetailView):
     template_name = 'collector/ticket.html'
     context_object_name = 'ticket'
 
+    def post(self, request, platform, ticket):
+        if is_ajax(request):
+            model = self.get_object()
+            if request.body:
+                data = json.loads(request.body)
+                if data.get('resolved') is True:
+                    model.resolved = False
+                    model.save()
+                if data.get('resolved') is False:
+                    model.resolved = True
+                    model.save()
+        return JsonResponse({'status': 201}, status=status.HTTP_201_CREATED)
+
     def get_object(self, queryset=None):
-        return Ticket.objects.get(number=self.kwargs.get('ticket'))
+        return self.model.objects.get(number=self.kwargs.get('ticket'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
