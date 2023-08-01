@@ -1,23 +1,11 @@
 # from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.http import FileResponse, Http404
+from django.http import FileResponse, JsonResponse, Http404
 from django.views import generic
 
 from rest_framework import status
-from rest_framework.response import Response
+# from rest_framework.response import Response
 
 from .models import Archive, Ticket, Platform
-
-
-# handles the url "/archives/{PATH}"".
-@login_required
-def download(request, path):
-    try:
-        file = Archive.objects.get(file=path)
-    except Archive.DoesNotExist:
-        return Http404
-
-    return FileResponse(file.file)
 
 
 class ArchiveHandlerView(generic.View):
@@ -29,13 +17,24 @@ class ArchiveHandlerView(generic.View):
         return FileResponse(file.file)
 
     def delete(self, request, path):
-        content = {'file': path}
         try:
             file = Archive.objects.get(file=path)
             file.delete()
-            return Response(content, status=status.HTTP_200_OK)
-        except Archive.DoesNot.Exist:
-            return Response(content, status=status.HTTP_204_NO_CONTENT)
+            return JsonResponse(
+                {
+                    'file': path,
+                    'status': status.HTTP_200_OK
+                },
+                status=status.HTTP_200_OK
+            )
+        except Archive.DoesNotExist:
+            return JsonResponse(
+                {
+                    'file': path,
+                    'status': status.HTTP_204_NO_CONTENT
+                },
+                status=status.HTTP_204_NO_CONTENT
+            )
 
 
 class ListAllTickets(generic.ListView):

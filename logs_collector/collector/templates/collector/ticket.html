@@ -1,70 +1,83 @@
-{% extends 'collector/base.html' %} 
+{% extends 'collector/base.html' %}
+{% load static %}
 {% block content %} 
 {% include 'collector/navigation.html' %}
 <main>
   <section>
     <div class="container mt-3">
       <div class="row">
-        <div class="list-group mb-2">
-          <div class="list-group-item list-group-item-action disable" aria-current="true">
+        {% csrf_token %}
+        <div class="card">
+          <div class="card-body" aria-current="true">
             <div class="d-flex w-100 justify-content-between mb-2">
-              <h5 class="mb-1">Ticket: {{ ticket.number }}</h5>
+              <h4 class="card-title mb-1">Ticket: {{ ticket.number }}</h4>
               <small>{{ ticket.time_create }}</small>
             </div>
             <div class="col-xl-6 mb-2">
-              <h6 class="mb-1">Platform: {{ ticket.platform.pretty_name }}</h6>
-              <h6 class="mb-1">Owner: {{ ticket.user.username }}</h6>
+              <h6 class="card-title mb-1">Platform: {{ ticket.platform.pretty_name }}</h6>
+              <h6 class="card-title mb-1">Owner: {{ ticket.user.username }}</h6>
             </div>   
             <div class="col-xl-6 mt-1 mb-2">
               {% if ticket.note %}
-                <small><b>Note:</b></small>
-                <hr>
-                  <p>{{ ticket.note }}</p>
-                <hr>
+                <div class="card">
+                    <div class="card-header">
+                      Note:
+                    </div>
+                    <div class="card-body">
+                      <p class="card-text">{{ ticket.note }}</p>
+                    </div>
+                </div>
               {% endif %}
             </div>
             <!-- Logs -->
             {% if ticket.archive_set.all %}
-            <small><b>Logs:</b></small>
-            <ul class="list-group mb-2 mt-2">
-            {% for archive in ticket.archive_set.all %}
-              <li class="list-group-item list-group-item-action">
-                <p style="word-wrap: break-word" ><b>File:</b> {{ archive.file }}</p>
-                <small>
-                  <b>SHA1:</b>
-                  <span style="word-wrap: break-word">{{ archive.sha1 }}</span>
-                </small>
-                <br>
-                <small>
-                  <b>Size:</b>
-                  <span style="word-wrap: break-word">{{ archive.size }}</span>
-                </small>
-                <div class="row">
-                  <div class="col" >
-                    <a
-                      class="btn btn-outline-success btn-sm mt-2"
-                      href="{{ archive.get_absolute_url }}"
-                    >GET</a>
-                    <button
-                    class="btn btn-outline-danger btn-sm ms-2 mt-2"
-                    button type="button" data-bs-toggle="modal" data-bs-target="#modal-archive-del-{{ archive.id }}"
-                    >DEL</button>
-                  </div>
-                </div>
-              </li>
-            {% endfor %}
-            </ul>
+                <ul class="list-group col-xl-6 mb-2 mt-2">
+                  {% for archive in ticket.archive_set.all %}
+                    <li 
+                      id="li-archive-{{ archive.id }}"
+                      class="list-group-item list-group-item-action">
+                      <smal>
+                        <b>File:</b>
+                        <span style="word-wrap: break-word">{{ archive.file }}</span>
+                      </small>
+                      <small>
+                        <br>
+                        <b>SHA1:</b>
+                        <span style="word-wrap: break-word">{{ archive.sha1 }}</span>
+                      </small>
+                      <br>
+                      <small>
+                        <b>Size:</b>
+                        <span style="word-wrap: break-word">{{ archive.size }}</span>
+                      </small>
+                      <div class="row">
+                        <div class="col-xl-8" >
+                          <a
+                            class="btn btn-outline-success btn-sm mt-2"
+                            href="{{ archive.get_absolute_url }}"
+                          ><i class="bi bi-download"></i> GET</a>
+                          <button
+                            button type="button"
+                            class="btn btn-outline-danger btn-sm ms-2 mt-2"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-archive-del-{{ archive.id }}"
+                          ><i class="bi bi-trash"></i> DEL</button>
+                        </div>
+                      </div>
+                    </li>
+                  {% endfor %}
+                  </ul>
             {% endif %}
             <!-- Card buttons -->
             <div class="d-flex w-100 justify-content-between">
               <a
                 href="{{ ticket.get_absolute_url }}"
                 class="btn btn-outline-warning mb-1 mt-1"
-              >Edit</a>
+              ><i class="bi bi-pencil-square"></i> Edit</a>
               <a
                 href="{{ ticket.get_absolute_url }}"
                 class="btn btn-outline-danger mb-1 mt-1"
-              >Delete</a>
+              ><i class="bi bi-trash"></i> Delete</a>
             </div>
           </div>
         </div>
@@ -82,8 +95,20 @@
               <p style="word-wrap: break-word">{{ archive.file }}</p>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-danger">Delete</button>
+              <button 
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >Cancel
+              </button>
+              <a
+                href="{% url 'download' archive.file %}"
+                type="button"
+                class="btn btn-danger btn-archive-eraser"
+                data-bs-dismiss="modal"
+                data-jq-archive-target="{{ archive.id }}"
+              >Delete 
+              </a>
             </div>
           </div>
         </div>
@@ -93,3 +118,6 @@
   </section>
 </main>
 {% endblock content %}
+{% block jquery %}
+  <script src="{% static 'collector/js/jq.delete.archive.js' %}"></script>
+{% endblock jquery %}

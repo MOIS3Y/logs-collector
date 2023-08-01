@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="auto">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -27,6 +27,7 @@
       href="{% static 'collector/img/favicon-16x16.png' %}"
     />
     <link rel="manifest" href="{% static 'collector/img/site.webmanifest' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <title>Document</title>
   </head>
   <body>
@@ -36,6 +37,7 @@
       </section>
     </main>
     <script src="{% static 'collector/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'collector/js/bs.theme.mode.js' %}"></script>
     <script src="{% static 'collector/js/jquery-3.7.0.min.js' %}"></script>
     {% block bs %}{% endblock bs %}
     {% block jquery %}{% endblock jquery %}
