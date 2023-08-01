@@ -11,12 +11,21 @@
           <div class="card-body" aria-current="true">
             <div class="d-flex w-100 justify-content-between mb-2">
               <h4 class="card-title mb-1">Ticket: {{ ticket.number }}</h4>
-              <small>{{ ticket.time_create }}</small>
+              <small><i class="bi bi-clock-history"></i> {{ ticket.time_create }}</small>
+            </div>
+            <div class="form-check form-switch form-check-reverse d-flex w-100 justify-content-left">
+              <label class="form-check-label" for="ticket-state-{{ ticket.number }}">Resolved:</label>
+              <input 
+                class="form-check-input ms-2 mb-2"
+                type="checkbox"
+                role="switch"
+                id="ticket-state-{{ ticket.number }}" 
+                {% if ticket.resolved %} checked {% endif %}>
             </div>
             <div class="col-xl-6 mb-2">
               <h6 class="card-title mb-1">Platform: {{ ticket.platform.pretty_name }}</h6>
-              <h6 class="card-title mb-1">Owner: {{ ticket.user.username }}</h6>
-            </div>   
+              <h6 class="card-title mb-3">Owner: {{ ticket.user.username }}</h6>
+            </div>          
             <div class="col-xl-6 mt-1 mb-2">
               {% if ticket.note %}
                 <div class="card">
