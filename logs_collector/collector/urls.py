@@ -15,12 +15,12 @@ urlpatterns = [
         name='index'
     ),
     path(
-        'tickets/<slug:platform>/',
+        'tickets/show/<slug:platform>/',
         views.ListPlatformTickets.as_view(),
         name='platform'
     ),
     path(
-        'tickets/<slug:platform>/<int:ticket>/',
+        'tickets/show/<slug:platform>/<int:ticket>/',
         views.DetailTicket.as_view(),
         name='ticket'
     ),
