@@ -12,7 +12,7 @@ urlpatterns = [
     path(
         'tickets/',
         views.ListAllTickets.as_view(),
-        name='index'
+        name='tickets'
     ),
     path(
         'tickets/show/<slug:platform>/',
@@ -23,6 +23,11 @@ urlpatterns = [
         'tickets/show/<slug:platform>/<int:ticket>/',
         views.DetailTicket.as_view(),
         name='ticket'
+    ),
+    path(
+        'tickets/delete/<int:ticket>/',
+        views.AjaxDeleteTicketHandler.as_view(),
+        name='delete'
     ),
     path(
         'archives/<path:path>',

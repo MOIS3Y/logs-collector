@@ -86,20 +86,28 @@
             <!-- Card buttons -->
             <div class="d-flex w-100 justify-content-between">
               <a
-                href="{{ ticket.get_absolute_url }}"
+                href="/"
                 class="btn btn-outline-warning mb-1 mt-1"
               ><i class="bi bi-pencil-square"></i> Edit</a>
-              <a
-                href="{{ ticket.get_absolute_url }}"
+              <button
                 class="btn btn-outline-danger mb-1 mt-1"
-              ><i class="bi bi-trash"></i> Delete</a>
+                data-bs-toggle="modal"
+                data-bs-target="#modal-ticket-del"
+              ><i class="bi bi-trash"></i> Delete
+            </button>
             </div>
           </div>
         </div>
       </div>
-      <!-- Modal -->
+      <!-- Modal Archive -->
       {% for archive in ticket.archive_set.all %}
-      <div class="modal fade" id="modal-archive-del-{{ archive.id }}" tabindex="-1" aria-labelledby="LabelArchive-{{ archive.id }}" aria-hidden="true">
+      <div 
+        class="modal fade"
+        id="modal-archive-del-{{ archive.id }}"
+        tabindex="-1"
+        aria-labelledby="LabelArchive-{{ archive.id }}"
+        aria-hidden="true"
+      >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -129,6 +137,34 @@
         </div>
       </div>
       {% endfor %}
+      <!-- Modal Ticket -->
+      <div class="modal fade" id="modal-ticket-del" tabindex="-1" aria-labelledby="LabelTicket" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="LabelTicket">Delete ticket #{{ ticket.number }} ?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Deleting a ticket will also permanently delete all files associated with it.</p>
+            </div>
+            <div class="modal-footer">
+                <button 
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+                >Cancel</button>
+                <a
+                  type="button"
+                  href="{% url 'delete' ticket.number %}"
+                  class="btn btn-danger btn-ticket-del"
+                  data-bs-dismiss="modal"
+                  data-jq-ticket-del-redirect="{% url 'tickets' %}"
+                >Delete</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </main>
