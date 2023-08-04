@@ -56,7 +56,7 @@ class Archive(models.Model):
             super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('download', kwargs={'path': self.file})
+        return reverse('collector:download', kwargs={'path': self.file})
 
     def __str__(self):
         return str(self.file)
@@ -67,7 +67,7 @@ class Platform(models.Model):
     pretty_name = models.CharField(max_length=20)
 
     def get_absolute_url(self):
-        return reverse('platform', kwargs={'platform': self.name})
+        return reverse('collector:platform', kwargs={'platform': self.name})
 
     def __str__(self):
         return self.name
@@ -87,7 +87,7 @@ class Ticket(models.Model):
 
     def get_absolute_url(self):
         return reverse(
-            'ticket',
+            'collector:ticket',
             kwargs={'platform': self.platform.name, 'ticket': self.number}
         )
 

@@ -23,7 +23,7 @@ from logs_collector import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('collector.urls')),
+    path('', include('collector.urls', namespace='collector')),
 ]
 
 

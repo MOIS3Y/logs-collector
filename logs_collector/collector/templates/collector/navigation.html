@@ -17,7 +17,7 @@
     </svg>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container">
-        <a class="navbar-brand" href="{% url 'index' %}">Logs Collector <i class="bi bi-file-earmark-zip-fill"></i></a>
+        <a class="navbar-brand" href="{% url 'collector:index' %}">Logs Collector <i class="bi bi-file-earmark-zip-fill"></i></a>
         <button
           class="navbar-toggler"
           type="button"
@@ -40,7 +40,7 @@
                 >Tickets</button>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="{% url 'index' %}">All</a>
+                  <a class="dropdown-item" href="{% url 'collector:index' %}">All</a>
                 </li>
                 {% for platform in platforms %}
                 <li>
