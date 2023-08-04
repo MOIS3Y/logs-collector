@@ -70,23 +70,49 @@
             </form>
             </li>
           </ul>
-          <!-- User settings -->
+          <!-- Right fields -->
           <ul class="navbar-nav flex-row flex-wrap ms-md-auto">
+            <!-- User settings -->
+            {% if request.user.is_authenticated %}
             <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
               <div class="btn-group">
                 <button type="button" class="btn btn-outline-secondary">
                   <i class="bi bi-person-square"></i> {{ request.user }}
                 </button>
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <button 
+                  type="button"
+                  class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
                   <span class="visually-hidden">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
+                  {% if request.user.is_staff %}
+                  <li>
+                    <a class="dropdown-item" type="button" href="{% url 'admin:index' %}"
+                    ><i class="bi bi-shield-shaded"></i></i> Admin</a>
+                  </li>
+                  {% endif %}
                   <li><button class="dropdown-item" type="button"><i class="bi bi-gear"></i> Settings</button></li>
                   <li><hr class="dropdown-divider" /></li>
                   <li><button class="dropdown-item" type="button"><i class="bi bi-door-closed"></i> Logout</button></li>           
                 </ul>
               </div>              
             </li>
+            {% else %}
+            <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
+              <div class="btn-group">
+                <a
+                  type="button"
+                  href="{% url 'admin:index' %}"
+                  class="btn btn-outline-secondary"
+                >
+                  <i class="bi bi-box-arrow-in-right"></i></i> Login
+                </a>
+              </div>              
+            </li>    
+            {% endif %}
             <!-- Separator -->
             <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
               <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-white"></div>
