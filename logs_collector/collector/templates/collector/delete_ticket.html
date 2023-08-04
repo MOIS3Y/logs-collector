@@ -1,7 +1,7 @@
 {% extends 'collector/base.html' %} 
 {% load static %} 
 {% block content %}
-{% include 'collector/navigation.html' %}
+{% include 'collector/includes/navbar.html' %}
 <div class="container mt-5">
   <div class="row">
     <form method="post" action="{% url 'delete' ticket.number %}">

@@ -1,24 +1,15 @@
 {% extends 'collector/base.html' %}
 {% load static %}
-{% block content %}
-
-{% include 'collector/navigation.html' %}
-<!-- Tickets -->
+{% block title %}<title>Collector</title>{% endblock title %}
+{% block main %}
 <div class="container mt-3">
+  {% csrf_token %}
+  <!-- Ticket -->
   {% for ticket in tickets %}
     <div class="row">
-      <!-- Ticket -->
-      <div class="list-group mb-2">
+    <div id="div-ticket-{{ ticket.number }}" class="list-group mb-2">
         <div class="list-group-item list-group-item-action disable" aria-current="true">
-          <div class="d-flex w-100 justify-content-between mb-2">
-            <h5 class="mb-1">Ticket: {{ ticket.number }}</h5>
-            <small>{{ ticket.time_create }}</small>
-          </div>
-          <div class="col-xl-6 mb-2">
-            <!-- Info -->
-            <h6 class="mb-1">Platform: {{ ticket.platform.pretty_name }}</h6>
-            <h6 class="mb-1">Owner: {{ ticket.user.username }}</h6>
-          </div>   
+          {% include 'collector/includes/ticket_info.html' %} 
           <div class="col-xl-6 mt-1 mb-2">
             <div class="accordion" id="#archive_{{ ticket.number }}">
               {% if ticket.note %}
@@ -60,18 +51,10 @@
                   data-bs-parent="#archive_{{ ticket.number }}"
                 >
                   <div class="accordion-body">
-                    <ul class="list-group mb-2">
-                    {% for archive in ticket.archive_set.all %}
-                      <li class="list-group-item list-group-item-action">
-                        <a 
-                          href="{{ archive.get_absolute_url }}"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top" 
-                          data-bs-title="Size: {{ archive.size }}"
-                          style="word-wrap: break-word"
-                        >{{ archive.file }}</a>
-                      </li>
-                    {% endfor %}
+                    <ul class="list-group col mb-2 mt-2">
+                      {% for archive in ticket.archive_set.all %}
+                        {% include 'collector/includes/ticket_archives.html' %}
+                      {% endfor %}
                     </ul>
                   </div>
                 </div>
@@ -84,14 +67,29 @@
               href="{{ ticket.get_absolute_url }}"
               class="btn btn-outline-primary mb-1 mt-1"
             >Open</a>
+            <button
+              class="btn btn-outline-danger mb-1 mt-1"
+              data-bs-toggle="modal"
+              data-bs-target="#modal-ticket-del-{{ ticket.number }}"
+            ><i class="bi bi-trash"></i> Delete
+            </button>
           </div>
         </div>
       </div>
     </div>
+    <!-- Modal ticket -->
+    {% include 'collector/includes/modal_ticket.html' %}
+    <!-- Modal archive -->
+    {% for archive in ticket.archive_set.all %}
+      {% include 'collector/includes/modal_archive.html' %}
+    {% endfor %}
   {% endfor %}
-  {% include 'collector/pagination.html' %}
+  {% include 'collector/includes/pagination.html' %}
 </div>
-{% endblock content %}
+{% endblock main %}
 {% block bs %}
 <script src="{% static 'collector/js/bs.tooltip.js' %}"></script>
 {% endblock bs %}
+{% block jquery %}
+  <script src="{% static 'collector/js/jq.ticket.detail.js' %}"></script>
+{% endblock jquery %}

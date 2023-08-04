@@ -1,0 +1,37 @@
+<li 
+  id="li-archive-{{ archive.id }}"
+  class="list-group-item list-group-item-action">
+  <smal>
+    <b>File:</b>
+    <span style="word-wrap: break-word">{{ archive.file }}</span>
+  </small>
+  <small>
+    <br>
+    <b>SHA1:</b>
+    <span style="word-wrap: break-word">{{ archive.sha1 }}</span>
+  </small>
+  <small>
+    <br>
+    <b>Uploaded:</b>
+    <span style="word-wrap: break-word">{{ archive.time_update }}</span>
+  </small>
+    <br>
+  <small>
+    <b>Size:</b>
+    <span style="word-wrap: break-word">{{ archive.size }}</span>
+  </small>
+  <div class="row">
+    <div class="d-flex justify-content-sm-start justify-content-between" >
+      <a
+        class="btn btn-outline-success btn-sm mt-2"
+        href="{{ archive.get_absolute_url }}"
+      ><i class="bi bi-download"></i> GET</a>
+      <button
+        button type="button"
+        class="btn btn-outline-danger btn-sm ms-2 mt-2"
+        data-bs-toggle="modal"
+        data-bs-target="#modal-archive-del-{{ archive.id }}"
+      ><i class="bi bi-trash"></i> DEL</button>
+    </div>
+  </div>
+</li>

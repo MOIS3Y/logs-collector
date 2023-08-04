@@ -1,175 +1,57 @@
 {% extends 'collector/base.html' %}
 {% load static %}
-{% block content %} 
-{% include 'collector/navigation.html' %}
-<main>
-  <section>
-    <div class="container mt-3">
-      <div class="row">
-        {% csrf_token %}
-        <div class="card">
-          <div class="card-body" aria-current="true">
-            <div class="d-flex w-100 justify-content-between mb-2">
-              <h4 class="card-title mb-1">Ticket: {{ ticket.number }}</h4>
-              <small><i class="bi bi-clock-history"></i> {{ ticket.time_create }}</small>
-            </div>
-            <div class="form-check form-switch form-check-reverse d-flex w-100 justify-content-left">
-              <label class="form-check-label" for="ticket-state">Resolved:</label>
-              <input 
-                class="form-check-input ms-2 mb-2"
-                type="checkbox"
-                role="switch"
-                id="ticket-state"
-                ticket-state-url="{% url 'collector:ajax_update_state_ticket' ticket.platform ticket.number %}"
-                {% if ticket.resolved %} ticket-state-switch="1" {% endif %}
-                {% if ticket.resolved %} checked {% endif %}>
-            </div>
-            <div class="col-xl-6 mb-2">
-              <h6 class="card-title mb-1">Platform: {{ ticket.platform.pretty_name }}</h6>
-              <h6 class="card-title mb-3">Owner: {{ ticket.user.username }}</h6>
-            </div>          
-            <div class="col-xl-6 mt-1 mb-2">
-              {% if ticket.note %}
-                <div class="card">
-                    <div class="card-header">
-                      Note:
-                    </div>
-                    <div class="card-body">
-                      <p class="card-text">{{ ticket.note }}</p>
-                    </div>
+{% block title %}<title>Collector - {{ ticket.number }}</title>{% endblock title %}
+{% block main %} 
+<div class="container mt-3">
+  <div class="row">
+    {% csrf_token %}
+    <div class="card">
+      <div class="card-body" aria-current="true">
+          {% include 'collector/includes/ticket_info.html' %}
+        <div class="col-xl-6 mt-1 mb-2">
+          {% if ticket.note %}
+            <div class="card">
+                <div class="card-header">
+                  Note:
                 </div>
-              {% endif %}
+                <div class="card-body">
+                  <p class="card-text">{{ ticket.note }}</p>
+                </div>
             </div>
-            <!-- Logs -->
-            {% if ticket.archive_set.all %}
-                <ul class="list-group col-xl-6 mb-2 mt-2">
-                  {% for archive in ticket.archive_set.all %}
-                    <li 
-                      id="li-archive-{{ archive.id }}"
-                      class="list-group-item list-group-item-action">
-                      <smal>
-                        <b>File:</b>
-                        <span style="word-wrap: break-word">{{ archive.file }}</span>
-                      </small>
-                      <small>
-                        <br>
-                        <b>SHA1:</b>
-                        <span style="word-wrap: break-word">{{ archive.sha1 }}</span>
-                      </small>
-                      <small>
-                        <br>
-                        <b>Uploaded:</b>
-                        <span style="word-wrap: break-word">{{ archive.time_update }}</span>
-                      </small>
-                        <br>
-                      <small>
-                        <b>Size:</b>
-                        <span style="word-wrap: break-word">{{ archive.size }}</span>
-                      </small>
-                      <div class="row">
-                        <div class="col-xl-8" >
-                          <a
-                            class="btn btn-outline-success btn-sm mt-2"
-                            href="{{ archive.get_absolute_url }}"
-                          ><i class="bi bi-download"></i> GET</a>
-                          <button
-                            button type="button"
-                            class="btn btn-outline-danger btn-sm ms-2 mt-2"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modal-archive-del-{{ archive.id }}"
-                          ><i class="bi bi-trash"></i> DEL</button>
-                        </div>
-                      </div>
-                    </li>
-                  {% endfor %}
-                  </ul>
-            {% endif %}
-            <!-- Card buttons -->
-            <div class="d-flex w-100 justify-content-between">
-              <a
-                href="/"
-                class="btn btn-outline-warning mb-1 mt-1"
-              ><i class="bi bi-pencil-square"></i> Edit</a>
-              <button
-                class="btn btn-outline-danger mb-1 mt-1"
-                data-bs-toggle="modal"
-                data-bs-target="#modal-ticket-del"
-              ><i class="bi bi-trash"></i> Delete
-            </button>
-            </div>
-          </div>
+          {% endif %}
         </div>
-      </div>
-      <!-- Modal Archive -->
-      {% for archive in ticket.archive_set.all %}
-      <div 
-        class="modal fade"
-        id="modal-archive-del-{{ archive.id }}"
-        tabindex="-1"
-        aria-labelledby="LabelArchive-{{ archive.id }}"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="LabelArchive-{{ archive.id }}">Delete this file?</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p style="word-wrap: break-word">{{ archive.file }}</p>
-            </div>
-            <div class="modal-footer">
-              <button 
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >Cancel
-              </button>
-              <a
-                href="{% url 'collector:download' archive.file %}"
-                type="button"
-                class="btn btn-danger btn-archive-eraser"
-                data-bs-dismiss="modal"
-                data-jq-archive-target="{{ archive.id }}"
-              >Delete 
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-      <!-- Modal Ticket -->
-      <div class="modal fade" id="modal-ticket-del" tabindex="-1" aria-labelledby="LabelTicket" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="LabelTicket">Delete ticket #{{ ticket.number }} ?</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>Deleting a ticket will also permanently delete all files associated with it.</p>
-            </div>
-            <div class="modal-footer">
-                <button 
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-                >Cancel</button>
-                <a
-                  type="button"
-                  href="{% url 'collector:ajax_delete_ticket' ticket.number %}"
-                  class="btn btn-danger btn-ticket-del"
-                  data-bs-dismiss="modal"
-                  data-jq-ticket-del-redirect="{% url 'collector:tickets' %}"
-                >Delete</a>
-            </div>
-          </div>
+        <!-- Logs -->
+        {% if ticket.archive_set.all %}
+            <ul class="list-group col-xl-6 mb-2 mt-2">
+              {% for archive in ticket.archive_set.all %}
+                {% include 'collector/includes/ticket_archives.html' %}
+              {% endfor %}
+            </ul>
+        {% endif %}
+        <!-- Card buttons -->
+        <div class="d-flex w-100 justify-content-between">
+          <a
+            href="/"
+            class="btn btn-outline-warning mb-1 mt-1"
+          ><i class="bi bi-pencil-square"></i> Edit</a>
+          <button
+            class="btn btn-outline-danger mb-1 mt-1"
+            data-bs-toggle="modal"
+            data-bs-target="#modal-ticket-del-{{ ticket.number }}"
+          ><i class="bi bi-trash"></i> Delete
+        </button>
         </div>
       </div>
     </div>
-  </section>
-</main>
-{% endblock content %}
+  </div>
+  <!-- Modal Archive -->
+  {% for archive in ticket.archive_set.all %}
+    {% include 'collector/includes/modal_archive.html' %}
+  {% endfor %}
+  <!-- Modal Ticket -->
+  {% include 'collector/includes/modal_ticket.html' %}
+</div>
+{% endblock main %}
 {% block jquery %}
   <script src="{% static 'collector/js/jq.ticket.detail.js' %}"></script>
 {% endblock jquery %}

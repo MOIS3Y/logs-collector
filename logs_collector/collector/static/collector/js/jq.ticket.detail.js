@@ -1,18 +1,19 @@
 $(function () {
     console.log("JQ is ready to work");
+
     // CSRF token:
     const CSRF = $("input[name=csrfmiddlewaretoken]").val()
-    // -- -- -- --
-    function deleteArchiveListElement(id) {
-        const archiveList = `#li-archive-${id}`
-        $(archiveList).hide(1500);
-    };
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+    // delete one attachment
+    // -- -- -- -- -- -- --
     $(".btn-archive-eraser").click(function (e) { 
         e.preventDefault();
         const archiveListElement = $(this).attr("data-jq-archive-target");
+        const delUrl = $(this).attr("href");
         $.ajax({
             type: "delete",
-            url: $(this).attr("href"),
+            url: delUrl,
             headers: {
                 "X-CSRFToken":CSRF,
                 "Content-Type":"application/json"
@@ -22,30 +23,31 @@ $(function () {
             // },
             success: function (response) {
                 console.log(response.status);
-                deleteArchiveListElement(archiveListElement);
+                $(archiveListElement).hide(1500);
             },
             error: function (response) {
                 console.log(response.status);
             }
         });
     });
-    $("#ticket-state").click(function () { 
+    // change ticket state
+    // -- -- -- -- -- -- --
+    $("input[name=ticket-state]").click(function () { 
         console.log('Press');
         let resolved = false;
-        let ticket_state_url = $(this).attr("ticket-state-url")
+        let ticketStateUrl = $(this).attr("ticket-state-url")
         if ($(this).attr("ticket-state-switch") === "1") {
             console.log('Find it!!!')
             resolved = true;
             $(this).attr("ticket-state-switch", "0");  // disable
-
         } else {
             resolved = false;
             $(this).attr("ticket-state-switch", "1");  // enable
         }
         console.log(resolved)
         $.ajax({
-            type: "post",
-            url: ticket_state_url,
+            type: "POST",
+            url: ticketStateUrl,
             headers: {
                 "X-CSRFToken":CSRF,
                 "Content-Type":"application/json"
@@ -63,23 +65,27 @@ $(function () {
             }
         });
     });
+    // delete ticket with attachments:
+    // -- -- -- -- -- -- -- -- -- -- --
     $(".btn-ticket-del").click(function (e) {
         e.preventDefault(); 
-        const del_url = $(this).attr("href")
-        const redirect_url = $(this).attr("data-jq-ticket-del-redirect")
+        const delUrl = $(this).attr("href")
+        const redirectUrl = $(this).attr("data-jq-ticket-del-redirect")
+        const elementTarget = $(this).attr("data-jq-ticket-del-target")
+        const delDiv = $(elementTarget)
         $.ajax({
             type: "DELETE",
-            url: del_url,
+            url: delUrl,
             headers: {
                 'X-CSRFToken':CSRF,
                 'Content-Type':'application/json'
             },
             success: function (response) {
                 console.log(response.status);
-                if (redirect_url) {
-                    window.location.href = redirect_url;
-                }else {
-                    console.log("Need delete ticket card");
+                if (delDiv.length) {
+                    delDiv.hide(1500);
+                } else {
+                    window.location.href = redirectUrl;
                 }
             },
             error: function (response) {
