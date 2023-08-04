@@ -32,15 +32,20 @@ $(function () {
     $("#ticket-state").click(function () { 
         console.log('Press');
         let resolved = false;
-        if ($(this).attr("checked")) {
+        let ticket_state_url = $(this).attr("ticket-state-url")
+        if ($(this).attr("ticket-state-switch") === "1") {
             console.log('Find it!!!')
-            resolved = true;   
+            resolved = true;
+            $(this).attr("ticket-state-switch", "0");  // disable
+
         } else {
             resolved = false;
+            $(this).attr("ticket-state-switch", "1");  // enable
         }
+        console.log(resolved)
         $.ajax({
             type: "post",
-            url: $(this).attr("ticket-state-url"),
+            url: ticket_state_url,
             headers: {
                 "X-CSRFToken":CSRF,
                 "Content-Type":"application/json"

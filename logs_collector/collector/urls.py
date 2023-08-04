@@ -4,6 +4,12 @@ from . import views
 
 
 urlpatterns = [
+
+    # █░█░█ █▀▀ █▄▄
+    # ▀▄▀▄▀ ██▄ █▄█
+    # -- -- -- -- --
+
+    # READ:
     path(
         '',
         views.ListAllTickets.as_view(),
@@ -25,13 +31,25 @@ urlpatterns = [
         name='ticket'
     ),
     path(
-        'tickets/delete/<int:ticket>/',
-        views.AjaxDeleteTicketHandler.as_view(),
-        name='delete'
-    ),
-    path(
         'archives/<path:path>',
         views.ArchiveHandlerView.as_view(),
         name="download"
+    ),
+
+    # ▄▀█ ░░█ ▄▀█ ▀▄▀
+    # █▀█ █▄█ █▀█ █░█
+    # -- -- -- -- --
+
+    # UPDATE:
+    path(
+        'ajax/tickets/update/<slug:platform>/<int:ticket>/',
+        views.UpdateTicketStateHandler.as_view(),
+        name='ajax_update_state_ticket'
+    ),
+    # DELETE:
+    path(
+        'ajax/tickets/delete/<int:ticket>/',
+        views.DeleteTicketHandler.as_view(),
+        name='ajax_delete_ticket'
     ),
 ]

@@ -19,5 +19,5 @@ def get_file_size(file_path, unit='bytes'):
 
 
 def is_ajax(request):
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return True

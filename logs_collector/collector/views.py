@@ -1,9 +1,8 @@
 import json
-# from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import FileResponse, HttpResponseNotAllowed, JsonResponse
+from django.http import FileResponse, JsonResponse
 from django.views import generic
-from django.shortcuts import get_object_or_404
+from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse_lazy
 
 from rest_framework import status
@@ -13,30 +12,20 @@ from .models import Archive, Ticket, Platform
 from .utils import is_ajax
 
 
-class ArchiveHandlerView(LoginRequiredMixin, generic.View):
+class ArchiveHandlerView(LoginRequiredMixin, SingleObjectMixin, generic.View):
+    model = Archive
+    slug_field = 'file'
+    slug_url_kwarg = 'path'
+
     def get(self, request, path):
-        file = get_object_or_404(Archive, file=path)
-        return FileResponse(file.file)
+        self.object = self.get_object()
+        return FileResponse(self.object.file)
 
     def delete(self, request, path):
-        try:
-            file = Archive.objects.get(file=path)
-            file.delete()
-            return JsonResponse(
-                {
-                    'file': path,
-                    'status': status.HTTP_200_OK
-                },
-                status=status.HTTP_200_OK
-            )
-        except Archive.DoesNotExist:
-            return JsonResponse(
-                {
-                    'file': path,
-                    'status': status.HTTP_204_NO_CONTENT
-                },
-                status=status.HTTP_204_NO_CONTENT
-            )
+        if is_ajax(request):
+            self.object = self.get_object()
+            self.object.delete()
+            return JsonResponse({'file': path}, status=status.HTTP_200_OK)
 
 
 class ListAllTickets(generic.ListView):
@@ -76,25 +65,6 @@ class DetailTicket(generic.DetailView):
     slug_field = 'number'
     slug_url_kwarg = 'ticket'
 
-    def post(self, request, **kwargs):
-        if is_ajax(request):
-            model = self.get_object()
-            if request.body:
-                data = json.loads(request.body)
-                resolved_field = data.get('resolved')
-                if isinstance(resolved_field, bool):
-                    model.resolved = not resolved_field
-                    model.save()
-                    return JsonResponse(
-                        {'resolved': not resolved_field},
-                        status=status.HTTP_201_CREATED
-                    )
-                return JsonResponse(
-                    {'resolved': 'must be a boolean'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        return HttpResponseNotAllowed(permitted_methods=['GET'])
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['platforms'] = Platform.objects.all()
@@ -109,27 +79,49 @@ class DeleteTicket(generic.DeleteView):
     slug_url_kwarg = 'ticket'
     success_url = reverse_lazy('tickets')
 
-    def delete(self, request, *args, **kwargs):
+
+class UpdateTicketStateHandler(SingleObjectMixin, generic.View):
+    model = Ticket
+    slug_field = 'number'
+    slug_url_kwarg = 'ticket'
+
+    def post(self, request, **kwargs):
         if is_ajax(request):
-            print("HELLO FROM AJAX")
+            self.object = self.get_object()
+            if request.body:
+                data = json.loads(request.body)
+                resolved_field = data.get('resolved')
+                if isinstance(resolved_field, bool):
+                    self.object.resolved = not resolved_field
+                    self.object.save()
+                    return JsonResponse(
+                        {'resolved': not resolved_field},
+                        status=status.HTTP_201_CREATED
+                    )
+                return JsonResponse(
+                    {'resolved': 'must be a boolean'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        return JsonResponse(
+            {'error': 'header XMLHttpRequest is required'},
+            status=status.HTTP_406_NOT_ACCEPTABLE
+        )
+
+
+class DeleteTicketHandler(SingleObjectMixin, generic.View):
+    model = Ticket
+    slug_field = 'number'
+    slug_url_kwarg = 'ticket'
+
+    def delete(self, request, ticket):
+        if is_ajax(request):
             self.object = self.get_object()
             self.object.delete()
             return JsonResponse(
                 {'status': status.HTTP_200_OK},
                 status=status.HTTP_200_OK
             )
-        response = super().delete(self, request, *args, **kwargs)
-        return response
-
-
-class AjaxDeleteTicketHandler(generic.View):
-
-    def delete(self, request, ticket):
-        if is_ajax(request):
-            print("HELLO FROM AJAX")
-            obj = Ticket.objects.get(number=ticket)
-            obj.delete()
-            return JsonResponse(
-                {'status': status.HTTP_200_OK},
-                status=status.HTTP_200_OK
-            )
+        return JsonResponse(
+            {'error': 'header XMLHttpRequest is required'},
+            status=status.HTTP_406_NOT_ACCEPTABLE
+        )
