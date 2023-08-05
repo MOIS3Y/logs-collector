@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'collector.apps.CollectorConfig',  # main app
     'rest_framework',
+    "crispy_forms",
+    "crispy_bootstrap5",
     'django_cleanup.apps.CleanupConfig',  # required bottom
 ]
 
@@ -126,3 +128,10 @@ MEDIA_URL = 'media/'
 
 MEDIA_ROOT_FOR_SENSITIVE_FILES = BASE_DIR / 'archives'
 MEDIA_URL_FOR_SENSITIVE_FILES = '/archives/'
+
+
+# django-crispy-forms and crispy-bootstrap5
+# https://django-crispy-forms.readthedocs.io/en/latest/
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"

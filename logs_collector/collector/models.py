@@ -60,11 +60,11 @@ class Platform(models.Model):
         return reverse('collector:platform', kwargs={'platform': self.name})
 
     def __str__(self):
-        return self.name
+        return self.pretty_name
 
 
 class Ticket(models.Model):
-    number = models.IntegerField()
+    number = models.IntegerField(unique=True, db_index=True)
     resolved = models.BooleanField(default=False)
     note = models.TextField(blank=True)
     time_create = models.DateTimeField(auto_now_add=True)

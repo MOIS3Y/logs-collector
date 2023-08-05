@@ -9,6 +9,7 @@ from rest_framework import status
 # from rest_framework.response import Response
 
 from .models import Archive, Ticket
+from .forms import CreateTicketForm
 from .utils import is_ajax
 
 
@@ -30,8 +31,8 @@ class ArchiveHandlerView(LoginRequiredMixin, SingleObjectMixin, generic.View):
 
 class CreateTicket(LoginRequiredMixin, generic.CreateView):
     model = Ticket
+    form_class = CreateTicketForm
     template_name = 'collector/ticket_create.html'
-    fields = ['number', 'platform', 'resolved', 'note']
 
     def form_valid(self, form):
         form.instance.user = self.request.user
