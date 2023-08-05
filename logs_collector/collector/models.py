@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 
-from .utils import logs_dir_path, get_file_size
+from .utils import logs_dir_path
 
 
 # Create a custom storage location, using a value from your settings file
@@ -42,16 +42,6 @@ class Archive(models.Model):
             for byte_block in iter(lambda: f.read(4096), b""):
                 sha1.update(byte_block)
             self.sha1 = sha1.hexdigest()
-        # calculate size and write size field to db
-            try:
-                mr = settings.MEDIA_ROOT_FOR_SENSITIVE_FILES
-                unit = 'gb'
-                file_path = mr / self.ticket / self.file.replace(" ", "_")
-                file_size = get_file_size(file_path, unit)
-                self.size = f"{file_size} {unit.title()}"
-            except Exception as error:
-                print(error)
-                self.size = '?'
             # Call the "real" save() method
             super().save(*args, **kwargs)
 
