@@ -1,6 +1,6 @@
 <div class="d-sm-flex w-100 justify-content-between mb-2">
   <h4 class="card-title mb-1">Ticket: {{ ticket.number }}</h4>
-  <small><i class="bi bi-clock-history"></i> {{ ticket.time_create }}</small>
+  <small><i class="bi bi-clock-history"></i> {{ ticket.time_create|date:"D d.m.y H:i" }}</small>
 </div>
 <div class="form-check form-switch form-check-reverse d-flex w-100 justify-content-left">
   <label class="form-check-label" for="ticket-state">Resolved:</label>

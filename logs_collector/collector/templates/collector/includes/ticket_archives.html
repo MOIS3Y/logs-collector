@@ -1,9 +1,10 @@
+{% load collector_extras %}
 <li 
   id="li-archive-{{ archive.id }}"
   class="list-group-item list-group-item-action">
   <smal>
     <b>File:</b>
-    <span style="word-wrap: break-word">{{ archive.file }}</span>
+    <span style="word-wrap: break-word">{{ archive.file.name|clean_filename }}</span>
   </small>
   <small>
     <br>
@@ -13,12 +14,12 @@
   <small>
     <br>
     <b>Uploaded:</b>
-    <span style="word-wrap: break-word">{{ archive.time_update }}</span>
+    <span style="word-wrap: break-word">{{ archive.time_update|date:"D d.m.y H:i" }}</span>
   </small>
     <br>
   <small>
     <b>Size:</b>
-    <span style="word-wrap: break-word">{{ archive.size }}</span>
+    <span style="word-wrap: break-word">{{ archive.file.size|sizify }}</span>
   </small>
   <div class="row">
     <div class="d-flex justify-content-sm-start justify-content-between" >
