@@ -1,0 +1,16 @@
+{% extends 'collector/base.html' %}
+{% load static %}
+{% block title %}<title>Collector - create</title>{% endblock title %}
+{% block main %}
+<div class="container mt-3">
+  <div class="row">
+    <form action="{% url 'collector:create' %}" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success">
+        Create
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock main %}

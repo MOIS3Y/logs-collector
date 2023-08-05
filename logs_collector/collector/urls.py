@@ -9,6 +9,13 @@ urlpatterns = [
     # ▀▄▀▄▀ ██▄ █▄█
     # -- -- -- -- --
 
+    # CREATE:
+    path(
+        'tickets/create/',
+        views.CreateTicket.as_view(),
+        name='create'
+    ),
+
     # READ:
     path(
         '',
