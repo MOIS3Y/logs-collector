@@ -1,5 +1,6 @@
 {% extends 'collector/base.html' %}
 {% load static %}
+{% load collector_extras %}
 {% block title %}<title>{{ title }}</title>{% endblock title %}
 {% block main %} 
 <div class="container mt-3">
@@ -15,7 +16,9 @@
                   Note:
                 </div>
                 <div class="card-body">
-                  <p class="card-text">{{ ticket.note }}</p>
+                  <div class="card-text">
+                    {{ ticket.note | markdown | safe }}
+                  </div>
                 </div>
             </div>
           {% endif %}
