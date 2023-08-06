@@ -1,8 +1,8 @@
 {% extends 'collector/base.html' %} 
 {% load static %} 
+{% block title %} {{ title }} {% endblock title %}
 {% block content %}
-{% include 'collector/includes/navbar.html' %}
-<div class="container mt-5">
+<div class="container mt-3">
   <div class="row">
     <form method="post" action="{% url 'collector:delete' ticket.number %}">
       {% csrf_token %}

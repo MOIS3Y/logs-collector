@@ -6,7 +6,7 @@ from crispy_bootstrap5.bootstrap5 import FloatingField
 from .models import Ticket
 
 
-class CreateTicketForm(forms.ModelForm):
+class TicketForm(forms.ModelForm):
 
     class Meta:
         model = Ticket
@@ -16,12 +16,12 @@ class CreateTicketForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(CreateTicketForm, self).__init__(*args, **kwargs)
+        super(TicketForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         # self.helper.attrs = {"novalidate": ''}
 
         self.helper.layout = Layout(
-            Div(FloatingField('number'), 'platform', css_class='col-md-2'),
-            Div('note', css_class='col-md-6'),
-            Submit('submit', 'Create', css_class='btn btn-success'),
+            Div(FloatingField('number'), 'platform', css_class='col-lg-2'),
+            Div('note', css_class='col-lg-6'),
+            Submit('submit', 'Save', css_class='btn btn-primary'),
         )

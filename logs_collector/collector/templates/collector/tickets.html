@@ -1,6 +1,6 @@
 {% extends 'collector/base.html' %}
 {% load static %}
-{% block title %}<title>Collector</title>{% endblock title %}
+{% block title %}<title>{{ title }}</title>{% endblock title %}
 {% block main %}
 <div class="container mt-3">
   {% csrf_token %}

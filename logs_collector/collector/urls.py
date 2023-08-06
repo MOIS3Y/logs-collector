@@ -15,7 +15,6 @@ urlpatterns = [
         views.CreateTicket.as_view(),
         name='create'
     ),
-
     # READ:
     path(
         '',
@@ -41,6 +40,12 @@ urlpatterns = [
         'archives/<path:path>',
         views.ArchiveHandlerView.as_view(),
         name="download"
+    ),
+    # UPDATE:
+    path(
+        'tickets/update/<slug:platform>/<int:ticket>/',
+        views.UpdateTicket.as_view(),
+        name='update'
     ),
 
     # ▄▀█ ░░█ ▄▀█ ▀▄▀

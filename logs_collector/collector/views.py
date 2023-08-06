@@ -9,8 +9,8 @@ from rest_framework import status
 # from rest_framework.response import Response
 
 from .models import Archive, Ticket
-from .forms import CreateTicketForm
-from .utils import is_ajax
+from .forms import TicketForm
+from .utils import PageTitleViewMixin, is_ajax
 
 
 class ArchiveHandlerView(LoginRequiredMixin, SingleObjectMixin, generic.View):
@@ -29,29 +29,51 @@ class ArchiveHandlerView(LoginRequiredMixin, SingleObjectMixin, generic.View):
             return JsonResponse({'file': path}, status=status.HTTP_200_OK)
 
 
-class CreateTicket(LoginRequiredMixin, generic.CreateView):
+class CreateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.CreateView):
     model = Ticket
-    form_class = CreateTicketForm
+    form_class = TicketForm
     template_name = 'collector/ticket_create.html'
+
+    def get_title(self):
+        return f'{self.title} - create'
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
 
-class ListAllTickets(generic.ListView):
+class UpdateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.UpdateView):
+    model = Ticket
+    form_class = TicketForm
+    template_name = 'collector/ticket_create.html'
+    slug_field = 'number'
+    slug_url_kwarg = 'ticket'
+
+    def get_title(self, **kwargs):
+        return f'{self.title} - {self.kwargs.get("ticket", "update")}'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class ListAllTickets(PageTitleViewMixin, generic.ListView):
     model = Ticket
     template_name = 'collector/tickets.html'
     context_object_name = 'tickets'
     paginate_by = 5
+    title = 'Collector - tickets'
 
 
-class ListPlatformTickets(generic.ListView):
+class ListPlatformTickets(PageTitleViewMixin, generic.ListView):
     model = Ticket
     template_name = 'collector/tickets.html'
     context_object_name = 'tickets'
     # allow_empty = False
     paginate_by = 5
+
+    def get_title(self, **kwargs):
+        return f'{self.title} - {self.kwargs.get("platform", "tickets")}'
 
     def get_queryset(self):
         return Ticket.objects.filter(
@@ -59,15 +81,18 @@ class ListPlatformTickets(generic.ListView):
         )
 
 
-class DetailTicket(generic.DetailView):
+class DetailTicket(PageTitleViewMixin, generic.DetailView):
     model = Ticket
     template_name = 'collector/ticket.html'
     context_object_name = 'ticket'
     slug_field = 'number'
     slug_url_kwarg = 'ticket'
 
+    def get_title(self, **kwargs):
+        return f'{self.title} - {self.kwargs.get("ticket", "show")}'
 
-class DeleteTicket(generic.DeleteView):
+
+class DeleteTicket(PageTitleViewMixin, generic.DeleteView):
     model = Ticket
     template_name = 'collector/ticket_delete.html'
     context_object_name = 'ticket'
