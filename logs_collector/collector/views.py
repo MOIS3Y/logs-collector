@@ -4,6 +4,7 @@ from django.http import FileResponse, JsonResponse
 from django.views import generic
 from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse_lazy
+from django.db.models import Q
 
 from rest_framework import status
 # from rest_framework.response import Response
@@ -63,6 +64,23 @@ class ListAllTickets(PageTitleViewMixin, generic.ListView):
     context_object_name = 'tickets'
     paginate_by = 5
     title = 'Collector - tickets'
+
+    def get_queryset(self):
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            query_list = []
+            try:
+                for item in search_query.split(','):
+                    query_list.append(int(item))
+            except ValueError:
+                return super().get_queryset()
+            queryset = self.model.objects.filter(
+                Q(number__in=query_list) | Q(number__icontains=query_list[0])
+            )
+            self.paginate_by = 100  # fake disable pagination)
+            return queryset
+
+        return super().get_queryset()
 
 
 class ListPlatformTickets(PageTitleViewMixin, generic.ListView):

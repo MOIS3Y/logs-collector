@@ -68,14 +68,19 @@
       <!-- Search -->
       <ul class="navbar-nav flex-row flex-wrap me-md-auto">
         <li class="nav-item py-2 col-12 col-lg-auto">
-        <form class="d-flex" role="search">
+        <form class="d-flex" role="search" action="{% url 'collector:tickets' %}">
           <input
             class="form-control me-2"
             type="search"
             placeholder="Search"
             aria-label="Search"
+            name="search"
           />
-          <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
+          <button
+            class="btn btn-outline-success"
+            type="submit">
+              <i class="bi bi-search"></i>
+          </button>
         </form>
         </li>
       </ul>
