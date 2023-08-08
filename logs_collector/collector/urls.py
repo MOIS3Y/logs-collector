@@ -9,6 +9,7 @@ app_name = 'collector'
 router = routers.DefaultRouter()
 router.register(r'archives', views.ArchiveUploadViewSet)
 
+
 urlpatterns = [
 
     # █░█░█ █▀▀ █▄▄
@@ -70,7 +71,6 @@ urlpatterns = [
         views.DeleteTicketHandler.as_view(),
         name='ajax_delete_ticket'
     ),
-
 
     # ▄▀█ █▀█ █
     # █▀█ █▀▀ █
