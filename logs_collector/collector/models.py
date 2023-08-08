@@ -1,6 +1,8 @@
 import hashlib
+import uuid
 from functools import partial
 
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
@@ -37,6 +39,7 @@ class Archive(models.Model):
         db_column='ticket_number',
         on_delete=models.CASCADE
     )
+    token = models.ForeignKey('Token', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
@@ -87,3 +90,19 @@ class Ticket(models.Model):
 
     def __str__(self):
         return str(self.number)
+
+
+class Token(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    expires = models.IntegerField(default=5, validators=[
+            MaxValueValidator(10),
+            MinValueValidator(1)
+        ])
+    blocked = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def get_absolute_url(self):
+        return reverse('collector:token')
+
+    def __str__(self):
+        return str(self.id)
