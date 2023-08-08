@@ -16,7 +16,7 @@ from .models import Archive, Ticket
 from .forms import TicketForm
 from .utils import PageTitleViewMixin, is_ajax
 
-from .serializers import ArchiveUploadSerializer
+from .serializers import ArchiveUploadSerializer, TicketSerializer
 
 
 class ArchiveHandlerView(LoginRequiredMixin, SingleObjectMixin, generic.View):
@@ -176,6 +176,15 @@ class ArchiveUploadViewSet(mixins.CreateModelMixin, GenericViewSet):
     queryset = Archive.objects.order_by('-time_create')
     serializer_class = ArchiveUploadSerializer
     parser_classes = (MultiPartParser, FormParser)
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class TicketCreateViewSet(mixins.CreateModelMixin, GenericViewSet):
+    queryset = Ticket.objects.order_by('-time_create')
+    serializer_class = TicketSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
