@@ -1,5 +1,5 @@
-import hashlib
 import uuid
+import hashlib
 from functools import partial
 
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -39,8 +39,6 @@ class Archive(models.Model):
         db_column='ticket_number',
         on_delete=models.CASCADE
     )
-    token = models.ForeignKey('Token', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         # calculate sha 1 hash sum and write md5 field to db
@@ -60,7 +58,7 @@ class Archive(models.Model):
 
 
 class Platform(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20, unique=True)
     pretty_name = models.CharField(max_length=20)
 
     def get_absolute_url(self):
@@ -74,9 +72,19 @@ class Ticket(models.Model):
     number = models.IntegerField(unique=True, db_index=True)
     resolved = models.BooleanField(default=False)
     note = models.TextField(blank=True)
+    token = models.UUIDField(default=uuid.uuid4, editable=False)
+    attempts = models.IntegerField(default=5, validators=[
+            MaxValueValidator(10),
+            MinValueValidator(1)
+        ])
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
-    platform = models.ForeignKey('Platform', on_delete=models.CASCADE)
+    platform = models.ForeignKey(
+        'Platform',
+        to_field='name',
+        db_column='platform_name',
+        on_delete=models.CASCADE
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
@@ -90,19 +98,3 @@ class Ticket(models.Model):
 
     def __str__(self):
         return str(self.number)
-
-
-class Token(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    expires = models.IntegerField(default=5, validators=[
-            MaxValueValidator(10),
-            MinValueValidator(1)
-        ])
-    blocked = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def get_absolute_url(self):
-        return reverse('collector:token')
-
-    def __str__(self):
-        return str(self.id)

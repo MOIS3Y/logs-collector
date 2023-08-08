@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Platform, Archive, Ticket, Token
+from .models import Platform, Archive, Ticket
 
 
 # Register your models here.
@@ -23,4 +23,3 @@ class TokenAdmin(admin.ModelAdmin):
 admin.site.register(Platform, PlatformAdmin)
 admin.site.register(Ticket, TicketAdmin)
 admin.site.register(Archive, ArchiveAdmin)
-admin.site.register(Token, TokenAdmin)
