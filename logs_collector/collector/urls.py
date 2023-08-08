@@ -1,8 +1,14 @@
-from django.urls import path
+from django.urls import path, include
+
+from rest_framework import routers
 
 from . import views
 
 app_name = 'collector'
+
+router = routers.DefaultRouter()
+router.register(r'archives', views.ArchiveUploadViewSet)
+
 urlpatterns = [
 
     # █░█░█ █▀▀ █▄▄
@@ -64,4 +70,12 @@ urlpatterns = [
         views.DeleteTicketHandler.as_view(),
         name='ajax_delete_ticket'
     ),
+
+
+    # ▄▀█ █▀█ █
+    # █▀█ █▀▀ █
+    # -- -- --
+
+    # CREATE:
+    path('api/v1/', include(router.urls))
 ]

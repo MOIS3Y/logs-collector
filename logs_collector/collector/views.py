@@ -7,11 +7,16 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 
 from rest_framework import status
-# from rest_framework.response import Response
+from rest_framework.parsers import FormParser, MultiPartParser
+
+from rest_framework import mixins
+from rest_framework.viewsets import GenericViewSet
 
 from .models import Archive, Ticket
 from .forms import TicketForm
 from .utils import PageTitleViewMixin, is_ajax
+
+from .serializers import ArchiveUploadSerializer
 
 
 class ArchiveHandlerView(LoginRequiredMixin, SingleObjectMixin, generic.View):
@@ -54,6 +59,7 @@ class UpdateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.UpdateView):
         return f'{self.title} - {self.kwargs.get("ticket", "update")}'
 
     def form_valid(self, form):
+        print(self.request.user)
         form.instance.user = self.request.user
         return super().form_valid(form)
 
@@ -164,3 +170,13 @@ class DeleteTicketHandler(SingleObjectMixin, generic.View):
             {'error': 'header XMLHttpRequest is required'},
             status=status.HTTP_406_NOT_ACCEPTABLE
         )
+
+
+class ArchiveUploadViewSet(mixins.CreateModelMixin, GenericViewSet):
+    queryset = Archive.objects.order_by('-time_create')
+    serializer_class = ArchiveUploadSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
