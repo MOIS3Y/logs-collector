@@ -32,7 +32,12 @@ class Archive(models.Model):
     sha1 = models.CharField(max_length=1024, editable=False)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
-    ticket = models.ForeignKey('Ticket', on_delete=models.CASCADE)
+    ticket = models.ForeignKey(
+        'Ticket',
+        to_field='number',
+        db_column='ticket_number',
+        on_delete=models.CASCADE
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
