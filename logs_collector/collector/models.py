@@ -28,8 +28,7 @@ class Archive(models.Model):
         blank=True,
         null=True
     )
-    size = models.CharField(max_length=50, blank=True, editable=False)
-    sha1 = models.CharField(max_length=1024, editable=False)
+    md5 = models.CharField(max_length=1024, editable=False)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
     ticket = models.ForeignKey(
@@ -41,12 +40,12 @@ class Archive(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        # calculate sha 1 hash sum and write sha1 field to db
+        # calculate sha 1 hash sum and write md5 field to db
         with self.file.open('rb') as f:
-            sha1 = hashlib.sha1()
+            md5 = hashlib.md5()
             for byte_block in iter(lambda: f.read(4096), b""):
-                sha1.update(byte_block)
-            self.sha1 = sha1.hexdigest()
+                md5.update(byte_block)
+            self.md5 = md5.hexdigest()
             # Call the "real" save() method
             super().save(*args, **kwargs)
 
