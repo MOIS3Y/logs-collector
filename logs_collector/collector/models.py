@@ -75,7 +75,7 @@ class Ticket(models.Model):
     token = models.UUIDField(default=uuid.uuid4, editable=False)
     attempts = models.IntegerField(default=5, validators=[
             MaxValueValidator(10),
-            MinValueValidator(1)
+            MinValueValidator(0)
         ])
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)

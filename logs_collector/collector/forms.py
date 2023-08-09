@@ -10,7 +10,7 @@ class TicketForm(forms.ModelForm):
 
     class Meta:
         model = Ticket
-        fields = ['number', 'platform', 'note']
+        fields = ['number', 'attempts', 'platform', 'note']
         widgets = {
             'platform': forms.RadioSelect()
         }
@@ -21,7 +21,11 @@ class TicketForm(forms.ModelForm):
         # self.helper.attrs = {"novalidate": ''}
 
         self.helper.layout = Layout(
-            Div(FloatingField('number'), 'platform', css_class='col-lg-2'),
+            Div(
+                FloatingField('number', 'attempts'),
+                'platform',
+                css_class='col-lg-2'
+            ),
             Div('note', css_class='col-lg-6'),
             Submit('submit', 'Save', css_class='btn btn-primary'),
         )

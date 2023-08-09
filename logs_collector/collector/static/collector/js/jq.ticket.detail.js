@@ -93,4 +93,18 @@ $(function () {
             }
         });
     });
+    // copy token to clipboard:
+    // -- -- -- -- -- -- -- --
+    $(".token-clipboard").click(function (e) { 
+        e.preventDefault();
+        const btn = $(this)
+        const tokenInput = btn.siblings("input[name=ticket-token]").val();
+        const icon = btn.children(":first").get(0)
+        navigator.clipboard.writeText(tokenInput);
+        btn.html('<i class="bi bi-check-lg"></i>')
+        // Revert button label after 500 milliseconds
+        setTimeout(function(){
+            btn.html(icon);
+        }, 500)
+    });
 });
