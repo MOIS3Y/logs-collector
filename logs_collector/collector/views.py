@@ -1,4 +1,5 @@
 import json
+from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse, JsonResponse
 from django.views import generic
@@ -7,6 +8,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 
 from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
 
 from rest_framework import mixins
@@ -16,7 +18,7 @@ from .models import Archive, Ticket
 from .forms import TicketForm
 from .utils import PageTitleViewMixin, is_ajax
 
-from .serializers import ArchiveUploadSerializer, TicketSerializer
+from .serializers import PublicArchiveUploadSerializer
 
 
 class ArchiveHandlerView(LoginRequiredMixin, SingleObjectMixin, generic.View):
@@ -172,20 +174,51 @@ class DeleteTicketHandler(SingleObjectMixin, generic.View):
         )
 
 
-class ArchiveUploadViewSet(mixins.CreateModelMixin, GenericViewSet):
+class PublicArchiveUploadViewSet(mixins.CreateModelMixin, GenericViewSet):
     queryset = Archive.objects.order_by('-time_create')
-    serializer_class = ArchiveUploadSerializer
+    serializer_class = PublicArchiveUploadSerializer
     parser_classes = (MultiPartParser, FormParser)
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        # ! upload-token protection:
+        upload_token = request.headers.get('upload-token', '')
+        if upload_token:
+            try:
+                bound_ticket = Ticket.objects.get(token=upload_token)
+                if bound_ticket.resolved:
+                    return Response(
+                        {'error': f'ticket {upload_token} already resolved'},
+                        status=status.HTTP_423_LOCKED
+                    )
+                if bound_ticket.attempts <= 0:
+                    return Response(
+                        {'error': f'token {upload_token} expired'},
+                        status=status.HTTP_423_LOCKED
+                    )
+                bound_ticket.attempts -= 1
+                bound_ticket.save()
+                # ? mixin bound ticket to request.data from user
+                request.data['ticket'] = bound_ticket
+            except ValidationError:
+                return Response(
+                    {'error': f'token {upload_token} is not valid'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+        else:
+            return Response(
+                {'error': 'Header Upload-Token is required'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        # ! default create method:
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-class TicketCreateViewSet(mixins.CreateModelMixin, GenericViewSet):
-    queryset = Ticket.objects.order_by('-time_create')
-    serializer_class = TicketSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(ticket=self.request.data['ticket'])

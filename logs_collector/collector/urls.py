@@ -7,9 +7,7 @@ from . import views
 app_name = 'collector'
 
 router = routers.DefaultRouter()
-router.register(r'archives', views.ArchiveUploadViewSet)
-router.register(r'tickets/create', views.TicketCreateViewSet)
-
+router.register(r'archives', views.PublicArchiveUploadViewSet)
 
 urlpatterns = [
 

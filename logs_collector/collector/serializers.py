@@ -1,17 +1,11 @@
 from rest_framework import serializers
 
-from .models import Archive, Ticket
+from .models import Archive
 
 
-class ArchiveUploadSerializer(serializers.ModelSerializer):
+class PublicArchiveUploadSerializer(serializers.ModelSerializer):
+    ticket = serializers.ReadOnlyField(source='ticket.token')
 
     class Meta:
         model = Archive
         fields = ['file', 'ticket']
-
-
-class TicketSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Ticket
-        fields = ['number', 'platform', 'note']
