@@ -3,8 +3,8 @@ import os
 
 def logs_dir_path(instance, filename):
     # file will be uploaded to
-    # MEDIA_ROOT_FOR_SENSITIVE_FILES/<ticket>/<filename>
-    return f'{instance.ticket}/{filename}'
+    # MEDIA_ROOT_FOR_SENSITIVE_FILES/<ticket-token>/<filename>
+    return f'{instance.ticket.number}/{filename}'
 
 
 def get_file_size(file_path, unit='bytes'):

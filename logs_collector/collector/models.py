@@ -41,7 +41,7 @@ class Archive(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        # calculate sha 1 hash sum and write md5 field to db
+        # calculate md5 hash sum and write md5 field to db
         with self.file.open('rb') as f:
             md5 = hashlib.md5()
             for byte_block in iter(lambda: f.read(4096), b""):
@@ -72,7 +72,7 @@ class Ticket(models.Model):
     number = models.IntegerField(unique=True, db_index=True)
     resolved = models.BooleanField(default=False)
     note = models.TextField(blank=True)
-    token = models.UUIDField(default=uuid.uuid4, editable=False)
+    token = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     attempts = models.IntegerField(default=5, validators=[
             MaxValueValidator(10),
             MinValueValidator(0)
