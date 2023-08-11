@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'collector.apps.CollectorConfig',  # main app
     'rest_framework',
     'django_filters',
+    'drf_spectacular',
     "crispy_forms",
     "crispy_bootstrap5",
     'django_cleanup.apps.CleanupConfig',  # required bottom
@@ -149,6 +150,18 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser'
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend', ],  # noqa:E501
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # noqa:E501
     # 'PAGE_SIZE': 3,
+}
+
+# https://drf-spectacular.readthedocs.io/en/latest/readme.html
+# TODO: set environ vars config!
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Logs collector API',
+    'DESCRIPTION': 'Collector of archives with log files for further analysis',
+    'VERSION': '0.1.0',
+    'SERVE_INCLUDE_SCHEMA': True,
+    'SERVE_PUBLIC': False,
+    'SERVERS': [{'url': 'https://example.com/v1', 'description': 'Text'},],
 }

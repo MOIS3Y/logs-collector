@@ -1,0 +1,836 @@
+openapi: 3.0.3
+info:
+  title: Logs collector API
+  version: 0.1.0
+  description: Collector of archives with log files for further analysis
+paths:
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/archives/:
+    get:
+      operationId: v1_archives_list
+      parameters:
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: ticket
+        schema:
+          type: integer
+      - in: query
+        name: ticket__gte
+        schema:
+          type: integer
+      - in: query
+        name: ticket__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: ticket__lte
+        schema:
+          type: integer
+      - in: query
+        name: time_create
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time_create__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time_create__lte
+        schema:
+          type: string
+          format: date-time
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Archive'
+          description: ''
+    post:
+      operationId: v1_archives_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Archive'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Archive'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Archive'
+          description: ''
+  /api/v1/archives/{id}/:
+    get:
+      operationId: v1_archives_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this archive.
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Archive'
+          description: ''
+    put:
+      operationId: v1_archives_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this archive.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Archive'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Archive'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Archive'
+          description: ''
+    patch:
+      operationId: v1_archives_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this archive.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedArchive'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedArchive'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Archive'
+          description: ''
+    delete:
+      operationId: v1_archives_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this archive.
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/platforms/:
+    get:
+      operationId: v1_platforms_list
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Platform'
+          description: ''
+    post:
+      operationId: v1_platforms_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Platform'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Platform'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Platform'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform'
+          description: ''
+  /api/v1/platforms/{name}/:
+    get:
+      operationId: v1_platforms_retrieve
+      parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform'
+          description: ''
+    put:
+      operationId: v1_platforms_update
+      parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Platform'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Platform'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Platform'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform'
+          description: ''
+    patch:
+      operationId: v1_platforms_partial_update
+      parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPlatform'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/PatchedPlatform'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPlatform'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform'
+          description: ''
+    delete:
+      operationId: v1_platforms_destroy
+      parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/tickets/:
+    get:
+      operationId: v1_tickets_list
+      parameters:
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: number
+        schema:
+          type: integer
+      - in: query
+        name: number__contains
+        schema:
+          type: integer
+      - in: query
+        name: number__gte
+        schema:
+          type: integer
+      - in: query
+        name: number__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: number__lte
+        schema:
+          type: integer
+      - in: query
+        name: resolved
+        schema:
+          type: boolean
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: user
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+          description: ''
+    post:
+      operationId: v1_tickets_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+  /api/v1/tickets/{number}/:
+    get:
+      operationId: v1_tickets_retrieve
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    put:
+      operationId: v1_tickets_update
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    patch:
+      operationId: v1_tickets_partial_update
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTicket'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/PatchedTicket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTicket'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+          description: ''
+    delete:
+      operationId: v1_tickets_destroy
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    Archive:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        file:
+          type: string
+          format: uri
+          nullable: true
+        ticket:
+          type: integer
+        time_create:
+          type: number
+          readOnly: true
+      required:
+      - id
+      - ticket
+      - time_create
+    PatchedArchive:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        file:
+          type: string
+          format: uri
+          nullable: true
+        ticket:
+          type: integer
+        time_create:
+          type: number
+          readOnly: true
+    PatchedPlatform:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 20
+        pretty_name:
+          type: string
+          maxLength: 20
+    PatchedTicket:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        number:
+          type: integer
+        resolved:
+          type: boolean
+        token:
+          type: string
+          format: uuid
+          readOnly: true
+        attempts:
+          type: integer
+          maximum: 10
+          minimum: 0
+        platform:
+          type: string
+        time_create:
+          type: number
+          readOnly: true
+        time_update:
+          type: number
+          readOnly: true
+        user:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          readOnly: true
+    Platform:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 20
+        pretty_name:
+          type: string
+          maxLength: 20
+      required:
+      - id
+      - name
+      - pretty_name
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        number:
+          type: integer
+        resolved:
+          type: boolean
+        token:
+          type: string
+          format: uuid
+          readOnly: true
+        attempts:
+          type: integer
+          maximum: 10
+          minimum: 0
+        platform:
+          type: string
+        time_create:
+          type: number
+          readOnly: true
+        time_update:
+          type: number
+          readOnly: true
+        user:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          readOnly: true
+      required:
+      - id
+      - number
+      - platform
+      - time_create
+      - time_update
+      - token
+      - user
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

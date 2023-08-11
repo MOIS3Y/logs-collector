@@ -1,15 +1,20 @@
 from rest_framework import serializers
 
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.openapi import OpenApiTypes
+
 from .models import Archive, Platform, Ticket
 
 
+@extend_schema_field(OpenApiTypes.NUMBER)
 class TimestampField(serializers.Field):
-    def to_representation(self, value):
+    def to_representation(self, value) -> int:
         return value.timestamp()
 
 
+@extend_schema_field(OpenApiTypes.NUMBER)
 class JsTimestampField(serializers.Field):
-    def to_representation(self, value):
+    def to_representation(self, value) -> int:
         return round(value.timestamp()*1000)
 
 
@@ -25,10 +30,6 @@ class ArchiveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Archive
         fields = ['id', 'file', 'ticket', 'time_create']
-
-    def to_representation(self, instance):
-        print(int(round(instance.time_create.timestamp())))
-        return super().to_representation(instance)
 
 
 class PlatformSerializer(serializers.ModelSerializer):
