@@ -1,9 +1,12 @@
 import os
+from django_filters import NumberFilter
 
 
 def logs_dir_path(instance, filename):
-    # file will be uploaded to
-    # MEDIA_ROOT_FOR_SENSITIVE_FILES/<ticket-token>/<filename>
+    """
+        file will be uploaded to
+        MEDIA_ROOT_FOR_SENSITIVE_FILES/<ticket-token>/<filename>
+    """
     return f'{instance.ticket.number}/{filename}'
 
 
@@ -37,3 +40,22 @@ class PageTitleViewMixin:
         context = super().get_context_data(**kwargs)
         context['title'] = self.get_title()
         return context
+
+
+class DateTimeFilterMixin:
+    year__gte = NumberFilter(
+        field_name='time_create',
+        lookup_expr='year__gte'
+    )
+    year__lte = NumberFilter(
+        field_name='time_create',
+        lookup_expr='year__lte'
+    )
+    month__gte = NumberFilter(
+        field_name='time_create',
+        lookup_expr='month__gte'
+    )
+    month__lte = NumberFilter(
+        field_name='time_create',
+        lookup_expr='month__lte'
+    )

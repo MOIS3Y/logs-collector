@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'collector.apps.CollectorConfig',  # main app
     'rest_framework',
+    'django_filters',
     "crispy_forms",
     "crispy_bootstrap5",
     'django_cleanup.apps.CleanupConfig',  # required bottom
@@ -147,6 +148,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework.parsers.MultiPartParser'
     ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend', ],  # noqa:E501
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # noqa:E501
     # 'PAGE_SIZE': 3,
 }

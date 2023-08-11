@@ -12,12 +12,14 @@ from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
-# from rest_framework import mixins
 from rest_framework import viewsets
+from rest_framework import filters
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Archive, Ticket, Platform
 from .forms import TicketForm
+from .filters import ArchiveFilter, TicketFilter
 from .utils import PageTitleViewMixin, is_ajax
 from .permissions import IsGuestUpload
 
@@ -187,6 +189,8 @@ class ArchiveViewSet(viewsets.ModelViewSet):
     serializer_class = ArchiveSerializer
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsGuestUpload, )
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ArchiveFilter
 
     def create(self, request, *args, **kwargs):
         # ! upload-token protection:
@@ -244,3 +248,9 @@ class TicketViewSet(viewsets.ModelViewSet):
     lookup_field = 'number'
     serializer_class = TicketSerializer
     permission_classes = (IsAuthenticated, )
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = TicketFilter
+    search_fields = ['number']
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
