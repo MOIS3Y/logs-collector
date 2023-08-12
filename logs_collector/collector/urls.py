@@ -78,5 +78,5 @@ urlpatterns = [
     # -- -- --
 
     # CRUD:
-    path('api/v1/', include(router.urls))
+    path('api/v1/', include(router.urls)),
 ]
