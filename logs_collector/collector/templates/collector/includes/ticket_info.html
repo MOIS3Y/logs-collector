@@ -9,7 +9,7 @@
     type="checkbox"
     role="switch"
     name="ticket-state"
-    ticket-state-url="{% url 'collector:ajax_update_state_ticket' ticket.platform.name ticket.number %}"
+    ticket-state-url="{% url 'collector:ticket-detail' ticket.number %}"
     {% if ticket.resolved %} ticket-state-switch="1" {% endif %}
     {% if ticket.resolved %} checked {% endif %}>
 </div>

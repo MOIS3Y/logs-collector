@@ -6,17 +6,11 @@ from . import views
 
 app_name = 'collector'
 
-router = routers.DefaultRouter()
-router.register(r'archives', views.ArchiveViewSet)
-router.register(r'platforms', views.PlatformViewSet)
-router.register(r'tickets', views.TicketViewSet)
+# █░█░█ █▀▀ █▄▄
+# ▀▄▀▄▀ ██▄ █▄█
+# -- -- -- -- --
 
 urlpatterns = [
-
-    # █░█░█ █▀▀ █▄▄
-    # ▀▄▀▄▀ ██▄ █▄█
-    # -- -- -- -- --
-
     # CREATE:
     path(
         'tickets/create/',
@@ -55,28 +49,18 @@ urlpatterns = [
         views.UpdateTicket.as_view(),
         name='update'
     ),
+]
 
-    # ▄▀█ ░░█ ▄▀█ ▀▄▀
-    # █▀█ █▄█ █▀█ █░█
-    # -- -- -- -- --
+# ▄▀█ █▀█ █
+# █▀█ █▀▀ █
+# -- -- --
 
-    # UPDATE:
-    path(
-        'ajax/tickets/update/<slug:platform>/<int:ticket>/',
-        views.UpdateTicketStateHandler.as_view(),
-        name='ajax_update_state_ticket'
-    ),
-    # DELETE:
-    path(
-        'ajax/tickets/delete/<int:ticket>/',
-        views.DeleteTicketHandler.as_view(),
-        name='ajax_delete_ticket'
-    ),
+router = routers.DefaultRouter()
+router.register(r'archives', views.ArchiveViewSet)
+router.register(r'platforms', views.PlatformViewSet)
+router.register(r'tickets', views.TicketViewSet)
 
-    # ▄▀█ █▀█ █
-    # █▀█ █▀▀ █
-    # -- -- --
-
+urlpatterns += [
     # CRUD:
     path('api/v1/', include(router.urls)),
 ]

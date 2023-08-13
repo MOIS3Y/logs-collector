@@ -1,10 +1,8 @@
-import json
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import FileResponse, JsonResponse
+from django.http import FileResponse
 from django.views import generic
 from django.views.generic.detail import SingleObjectMixin
-from django.urls import reverse_lazy
 from django.db.models import Q
 
 from rest_framework import status
@@ -20,7 +18,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Archive, Ticket, Platform
 from .forms import TicketForm
 from .filters import ArchiveFilter, TicketFilter
-from .utils import PageTitleViewMixin, is_ajax
+from .utils import PageTitleViewMixin
 from .permissions import IsGuestUpload
 
 from .serializers import (
@@ -39,12 +37,6 @@ class ArchiveHandlerView(LoginRequiredMixin, SingleObjectMixin, generic.View):
     def get(self, request, path):
         self.object = self.get_object()
         return FileResponse(self.object.file)
-
-    def delete(self, request, path):
-        if is_ajax(request):
-            self.object = self.get_object()
-            self.object.delete()
-            return JsonResponse({'file': path}, status=status.HTTP_200_OK)
 
 
 class CreateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.CreateView):
@@ -71,7 +63,6 @@ class UpdateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.UpdateView):
         return f'{self.title} - {self.kwargs.get("ticket", "update")}'
 
     def form_valid(self, form):
-        print(self.request.user)
         form.instance.user = self.request.user
         return super().form_valid(form)
 
@@ -95,13 +86,17 @@ class ListAllTickets(PageTitleViewMixin, generic.ListView):
             queryset = self.model.objects.filter(
                 Q(number__in=query_list) | Q(number__icontains=query_list[0])
             )
-            self.paginate_by = 100  # fake disable pagination)
+            self.paginate_by = 100  # ? fake disable pagination)
             return queryset
 
         return super().get_queryset()
 
 
-class ListPlatformTickets(PageTitleViewMixin, generic.ListView):
+class ListPlatformTickets(
+        LoginRequiredMixin,
+        PageTitleViewMixin,
+        generic.ListView
+        ):
     model = Ticket
     template_name = 'collector/tickets.html'
     context_object_name = 'tickets'
@@ -117,7 +112,7 @@ class ListPlatformTickets(PageTitleViewMixin, generic.ListView):
         )
 
 
-class DetailTicket(PageTitleViewMixin, generic.DetailView):
+class DetailTicket(LoginRequiredMixin, PageTitleViewMixin, generic.DetailView):
     model = Ticket
     template_name = 'collector/ticket.html'
     context_object_name = 'ticket'
@@ -126,62 +121,6 @@ class DetailTicket(PageTitleViewMixin, generic.DetailView):
 
     def get_title(self, **kwargs):
         return f'{self.title} - {self.kwargs.get("ticket", "show")}'
-
-
-class DeleteTicket(PageTitleViewMixin, generic.DeleteView):
-    model = Ticket
-    template_name = 'collector/ticket_delete.html'
-    context_object_name = 'ticket'
-    slug_field = 'number'
-    slug_url_kwarg = 'ticket'
-    success_url = reverse_lazy('tickets')
-
-
-class UpdateTicketStateHandler(SingleObjectMixin, generic.View):
-    model = Ticket
-    slug_field = 'number'
-    slug_url_kwarg = 'ticket'
-
-    def post(self, request, **kwargs):
-        if is_ajax(request):
-            self.object = self.get_object()
-            if request.body:
-                data = json.loads(request.body)
-                resolved_field = data.get('resolved')
-                if isinstance(resolved_field, bool):
-                    self.object.resolved = not resolved_field
-                    self.object.save()
-                    return JsonResponse(
-                        {'resolved': not resolved_field},
-                        status=status.HTTP_201_CREATED
-                    )
-                return JsonResponse(
-                    {'resolved': 'must be a boolean'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        return JsonResponse(
-            {'error': 'header XMLHttpRequest is required'},
-            status=status.HTTP_406_NOT_ACCEPTABLE
-        )
-
-
-class DeleteTicketHandler(SingleObjectMixin, generic.View):
-    model = Ticket
-    slug_field = 'number'
-    slug_url_kwarg = 'ticket'
-
-    def delete(self, request, ticket):
-        if is_ajax(request):
-            self.object = self.get_object()
-            self.object.delete()
-            return JsonResponse(
-                {'status': status.HTTP_200_OK},
-                status=status.HTTP_200_OK
-            )
-        return JsonResponse(
-            {'error': 'header XMLHttpRequest is required'},
-            status=status.HTTP_406_NOT_ACCEPTABLE
-        )
 
 
 class ArchiveViewSet(viewsets.ModelViewSet):
@@ -210,7 +149,7 @@ class ArchiveViewSet(viewsets.ModelViewSet):
                     )
                 bound_ticket.attempts -= 1
                 bound_ticket.save()
-                # ? mixin bound ticket to request.data from user
+                # ? mixin bound ticket number to request.data from user
                 request.data['ticket'] = bound_ticket.number
                 # ? change serializer for guest user
                 self.serializer_class = PublicArchiveUploadSerializer

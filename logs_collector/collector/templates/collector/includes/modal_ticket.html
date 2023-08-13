@@ -27,7 +27,7 @@
         </button>
         <a
           type="button"
-          href="{% url 'collector:ajax_delete_ticket' ticket.number %}"
+          href="{% url 'collector:ticket-detail' ticket.number %}"
           class="btn btn-danger btn-ticket-del"
           data-bs-dismiss="modal"
           data-jq-ticket-del-target="#div-ticket-{{ ticket.number }}"

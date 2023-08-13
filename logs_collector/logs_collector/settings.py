@@ -173,12 +173,6 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '0.1.0',
     'SERVE_INCLUDE_SCHEMA': True,
     'SERVE_PUBLIC': False,
-    'SERVERS': [
-        {
-            'url': 'http://localhost:8000/api/v1/',
-            'description': 'main api endpoint'
-        },
-    ],
 }
 
 # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/

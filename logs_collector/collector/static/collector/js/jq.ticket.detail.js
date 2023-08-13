@@ -12,7 +12,7 @@ $(function () {
         const archiveListElement = $(this).attr("data-jq-archive-target");
         const delUrl = $(this).attr("href");
         $.ajax({
-            type: "delete",
+            type: "DELETE",
             url: delUrl,
             headers: {
                 "X-CSRFToken":CSRF,
@@ -21,12 +21,12 @@ $(function () {
             // beforeSend: function(xhr) {
             //     xhr.setRequestHeader("X-CSRFToken", csrf);
             // },
-            success: function (response) {
-                console.log(response.status);
+            success: function (data, textStatus, jqXHR) {
+                console.log(jqXHR.status);
                 $(archiveListElement).hide(1500);
             },
-            error: function (response) {
-                console.log(response.status);
+            error: function (data, textStatus, jqXHR) {
+                console.log(jqXHR.status);
             }
         });
     });
@@ -37,16 +37,13 @@ $(function () {
         let resolved = false;
         let ticketStateUrl = $(this).attr("ticket-state-url")
         if ($(this).attr("ticket-state-switch") === "1") {
-            console.log('Find it!!!')
-            resolved = true;
             $(this).attr("ticket-state-switch", "0");  // disable
         } else {
-            resolved = false;
+            resolved = true;
             $(this).attr("ticket-state-switch", "1");  // enable
         }
-        console.log(resolved)
         $.ajax({
-            type: "POST",
+            type: "PATCH",
             url: ticketStateUrl,
             headers: {
                 "X-CSRFToken":CSRF,
@@ -57,11 +54,12 @@ $(function () {
             data: JSON.stringify({
                 resolved: resolved,
             }),
-            success: function (response) {
-                console.log(response.resolved)
+            success: function (data, textStatus, jqXHR) {
+                console.log(jqXHR.status)
             },
-            error: function (response) {
-                console.log(response.resolved)
+            error: function (data, textStatus, jqXHR) {
+                console.log(data)
+                console.log(jqXHR.status)
             }
         });
     });
@@ -80,16 +78,16 @@ $(function () {
                 'X-CSRFToken':CSRF,
                 'Content-Type':'application/json'
             },
-            success: function (response) {
-                console.log(response.status);
+            success: function (data, textStatus, jqXHR) {
+                console.log(jqXHR.status);
                 if (delDiv.length) {
                     delDiv.hide(1500);
                 } else {
                     window.location.href = redirectUrl;
                 }
             },
-            error: function (response) {
-                console.log(response.status);
+            error: function (data, textStatus, jqXHR) {
+                console.log(jqXHR.status);
             }
         });
     });
