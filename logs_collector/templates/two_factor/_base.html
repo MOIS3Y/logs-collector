@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    {% include 'collector/includes/metalinks.html' %}
+    <title>Collector - {% block title %}{% endblock %}</title>
+    {% block extra_media %}{% endblock %}
+  </head>
+  <body>
+    <!-- Two factor auth-->
+    <section>
+      <header>
+        {% block 'navigation' %}{% endblock 'navigation' %}
+      </header>
+    </section>
+    <section>
+      <main>
+        <div
+          class="d-flex min-vh-100 align-items-center py-4 bg-body-tertiary"
+          cz-shortcut-listen="true" >
+          {% block content_wrapper %}
+            <div class="container">
+              <div class="row">{% block content %}{% endblock %}</div>
+            </div>
+          {% endblock %}
+        </div>
+      </main>
+    </section>
+    <!-- Theme switcher-->
+    <section>
+      <footer>
+        <div
+          class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle"
+        >
+        {% include 'collector/includes/theme_swither.html' %}
+        </div>
+      </footer>
+    </section>
+    <script src="{% static 'collector/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'collector/js/bs.theme.mode.js' %}"></script>
+  </body>
+</html>

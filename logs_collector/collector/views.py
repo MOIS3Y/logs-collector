@@ -15,6 +15,8 @@ from rest_framework import filters
 
 from django_filters.rest_framework import DjangoFilterBackend
 
+from two_factor.views import OTPRequiredMixin
+
 from .models import Archive, Ticket, Platform
 from .forms import TicketForm
 from .filters import ArchiveFilter, TicketFilter
@@ -29,7 +31,11 @@ from .serializers import (
 )
 
 
-class ArchiveHandlerView(LoginRequiredMixin, SingleObjectMixin, generic.View):
+class ArchiveHandlerView(
+        OTPRequiredMixin,
+        LoginRequiredMixin,
+        SingleObjectMixin,
+        generic.View):
     model = Archive
     slug_field = 'file'
     slug_url_kwarg = 'path'
@@ -67,7 +73,7 @@ class UpdateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.UpdateView):
         return super().form_valid(form)
 
 
-class ListAllTickets(PageTitleViewMixin, generic.ListView):
+class ListAllTickets(LoginRequiredMixin, PageTitleViewMixin, generic.ListView):
     model = Ticket
     template_name = 'collector/tickets.html'
     context_object_name = 'tickets'

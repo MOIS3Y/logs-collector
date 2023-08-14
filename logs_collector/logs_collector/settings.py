@@ -36,12 +36,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'collector.apps.CollectorConfig',  # main app
+    'account.apps.AccountConfig',  # account app
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
     'drf_spectacular',
     "crispy_forms",
     "crispy_bootstrap5",
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor.plugins.phonenumber',  # <- if you want phone number capability
+    'two_factor',
     'django_cleanup.apps.CleanupConfig',  # required bottom
 ]
 
@@ -51,6 +57,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -60,7 +67,7 @@ ROOT_URLCONF = 'logs_collector.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -216,3 +223,7 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",  # noqa:E501
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",  # noqa:E501
 }
+
+LOGIN_URL = 'two_factor:login'
+LOGIN_REDIRECT_URL = 'collector:index'
+LOGOUT_REDIRECT_URL = 'two_factor:login'
