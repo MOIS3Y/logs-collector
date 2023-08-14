@@ -1,20 +1,35 @@
-{% extends "two_factor/_base_focus.html" %}
+{% extends "two_factor/_base.html" %}
 {% load i18n %}
 
 {% block content %}
-  <h1>{% block title %}{% trans "Permission Denied" %}{% endblock %}</h1>
+<div class="d-flex min-vh-100 align-items-center py-4" cz-shortcut-listen="true">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 offset-md-4">
+        <h1>{% block title %}{% trans "Permission Denied" %}{% endblock %}</h1>
 
-  <p>{% blocktrans trimmed %}The page you requested, enforces users to verify using
-    two-factor authentication for security reasons. You need to enable these
-    security features in order to access this page.{% endblocktrans %}</p>
-
-  <p>{% blocktrans trimmed %}Two-factor authentication is not enabled for your
-    account. Enable two-factor authentication for enhanced account
-    security.{% endblocktrans %}</p>
-  <p>
-    <a href="javascript:history.go(-1)"
-       class="float-right btn btn-link">{% trans "Go back" %}</a>
-    <a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
-    {% trans "Enable Two-Factor Authentication" %}</a>
-  </p>
+        <p>{% blocktrans trimmed %}The page you requested, enforces users to verify using
+          two-factor authentication for security reasons. You need to enable these
+          security features in order to access this page.{% endblocktrans %}</p>
+          
+        <p>{% blocktrans trimmed %}Two-factor authentication is not enabled for your
+          account. Enable two-factor authentication for enhanced account
+          security.{% endblocktrans %}</p>
+        <p>
+          <a href="javascript:history.go(-1)"
+            class="float-right btn btn-link">{% trans "Go back" %}</a>
+          <a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
+          {% trans "Enable Two-Factor Authentication" %}</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
+
+<!-- Theme switcher -->
+{% block theme_switcher %}
+<div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+  {% include 'includes/theme_switcher.html' %}
+</div>
+{% endblock theme_switcher %}

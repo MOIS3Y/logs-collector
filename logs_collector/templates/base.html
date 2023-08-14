@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{% static '/css/bootstrap.min.css' %}"
+      rel="stylesheet"
+    >
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{% static '/img/apple-touch-icon.png' %}"
+    >
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{% static '/img/favicon-32x32.png' %}"
+    >
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{% static '/img/favicon-16x16.png' %}"
+    >
+    <link 
+      rel="manifest"
+      href="{% static '/img/site.webmanifest' %}"
+    >
+    <link 
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    >
+    {% block collector_head %}{% endblock collector_head %}
+    {% block account_head %}{% endblock account_head %}
+  </head>
+  <body>
+    {% block collector_content %}{% endblock collector_content %}
+    {% block account_content %}{% endblock account_content %}
+    
+    <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static '/js/bs.theme.mode.js' %}"></script>
+    
+    {% block collector_scripts %}{% endblock collector_scripts %}
+    {% block account_scripts %}{% endblock account_scripts %}
+  </body>
+</html>

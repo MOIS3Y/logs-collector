@@ -1,6 +1,8 @@
 {% extends "two_factor/_base_focus.html" %}
 {% load i18n %}
 
+{% block nav %}{% include 'includes/navigation.html' %}{% endblock nav %}
+
 {% block content %}
   <h1>{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
 

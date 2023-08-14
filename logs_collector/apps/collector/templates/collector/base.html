@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block collector_head %}
+  <title>{% block title %}{% endblock title %}</title>
+{% endblock collector_head %}
+
+{% block collector_content %}
+  <header>
+    <section>
+      {% include 'includes/navigation.html' %}
+    </section>
+  </header>
+  <main>
+    <section>
+      {% block main %}{% endblock main %}
+    </section>
+  </main>
+  <footer>
+    <section>
+      {% block footer %}{% endblock footer %}
+    </section>
+  </footer>
+{% endblock collector_content %}
+
+{% block collector_scripts %}
+  <script src="{% static 'collector/js/jquery-3.7.0.min.js' %}"></script>
+  {% block bs %}{% endblock bs %}
+  {% block jquery %}{% endblock jquery %}
+{% endblock collector_scripts %}

@@ -5,6 +5,8 @@
   {{ form.media }}
 {% endblock %}
 
+{% block nav %}{% include 'includes/navigation.html' %}{% endblock nav %}
+
 {% block content %}
   <h1>{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
   {% if wizard.steps.current == 'welcome' %}
@@ -52,13 +54,14 @@
       token in the field below. Your YubiKey will be linked to your
       account.{% endblocktrans %}</p>
   {% endif %}
+  <div class="input-group mb-3 d-flex justify-content-center">
+    <form action="" method="post">{% csrf_token %}
+      {% include "two_factor/_wizard_forms.html" %}
 
-  <form action="" method="post">{% csrf_token %}
-    {% include "two_factor/_wizard_forms.html" %}
+      {# hidden submit button to enable [enter] key #}
+      <input type="submit" value="" hidden />
 
-    {# hidden submit button to enable [enter] key #}
-    <input type="submit" value="" hidden />
-
-    {% include "two_factor/_wizard_actions.html" %}
-  </form>
+      {% include "two_factor/_wizard_actions.html" %}
+    </form>
+  </div>
 {% endblock %}
