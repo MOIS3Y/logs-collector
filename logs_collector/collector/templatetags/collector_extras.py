@@ -2,7 +2,7 @@ import markdown as md
 from django import template
 from django.template.defaultfilters import stringfilter
 
-from apps.collector.models import Platform
+from collector.models import Platform
 
 
 register = template.Library()

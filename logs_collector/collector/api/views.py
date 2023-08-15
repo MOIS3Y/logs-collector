@@ -10,7 +10,7 @@ from rest_framework import filters
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from apps.collector.models import Archive, Ticket, Platform  # ???????
+from collector.models import Archive, Ticket, Platform
 
 from .filters import ArchiveFilter, TicketFilter
 from .permissions import IsGuestUpload

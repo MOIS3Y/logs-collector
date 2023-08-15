@@ -35,8 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.collector.apps.CollectorConfig',  # main app
-    'apps.account.apps.AccountConfig',  # account app
+    'collector.apps.CollectorConfig',  # main app
+    'account.apps.AccountConfig',  # account app
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',

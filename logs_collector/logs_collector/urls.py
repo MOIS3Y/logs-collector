@@ -11,7 +11,7 @@ from drf_spectacular.views import (
 from two_factor.urls import urlpatterns as tf_urls
 
 from logs_collector import settings
-from apps.account.utils import AdminSiteOTPRequiredMixinRedirectSetup
+from account.utils import AdminSiteOTPRequiredMixinRedirectSetup
 
 
 # ? 2FA patch (Admin site protection)
@@ -25,7 +25,7 @@ urlpatterns = [
     ),
     path(
         '',
-        include('apps.collector.urls', namespace='collector')
+        include('collector.urls', namespace='collector')
     ),
     path(
         '',
@@ -33,11 +33,11 @@ urlpatterns = [
     ),
     path(
         '',
-        include('apps.account.urls', namespace='account')
+        include('account.urls', namespace='account')
     ),
     path(
         'api/',
-        include('apps.collector.api.urls', namespace='collector_api')
+        include('collector.api.urls', namespace='collector_api')
     ),
 ]
 

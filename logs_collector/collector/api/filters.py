@@ -5,7 +5,7 @@ from django_filters.rest_framework import (
 )
 from django_filters import widgets
 
-from apps.collector.models import Archive, Ticket
+from collector.models import Archive, Ticket
 from .utils import DateTimeFilterMixin
 
 

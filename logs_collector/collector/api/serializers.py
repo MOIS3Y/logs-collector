@@ -3,7 +3,7 @@ from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
 from drf_spectacular.openapi import OpenApiTypes
 
-from apps.collector.models import Archive, Platform, Ticket
+from collector.models import Archive, Platform, Ticket
 
 
 @extend_schema_field(OpenApiTypes.NUMBER)
