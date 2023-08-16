@@ -3,12 +3,28 @@ from django.http import FileResponse
 from django.views import generic
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q
+from django.shortcuts import render
 
 from two_factor.views import OTPRequiredMixin
 
-from .forms import TicketForm
+from .forms import TicketForm, ArchiveForm
 from .models import Archive, Ticket
 from .utils import PageTitleViewMixin
+
+
+class ArchiveUploadView(PageTitleViewMixin, generic.View):
+    form_class = ArchiveForm()
+    template = 'collector/archive_upload.html',
+
+    def get(self, request):
+        return render(
+            request,
+            self.template,
+            context={'form': self.form_class}
+        )
+
+    def get_title(self):
+        return f'{self.title} - upload'
 
 
 class ArchiveHandlerView(

@@ -19,6 +19,7 @@ class JsTimestampField(serializers.Field):
 
 
 class PublicArchiveUploadSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Archive
         fields = ['file', 'ticket']

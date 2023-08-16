@@ -15,6 +15,11 @@ urlpatterns = [
         views.CreateTicket.as_view(),
         name='create'
     ),
+    path(
+        'archives/upload/',
+        views.ArchiveUploadView.as_view(),
+        name='upload'
+    ),
     # READ:
     path(
         '',
@@ -37,7 +42,7 @@ urlpatterns = [
         name='ticket'
     ),
     path(
-        'archives/<path:path>',
+        'archives/download/<path:path>',
         views.ArchiveHandlerView.as_view(),
         name="download"
     ),

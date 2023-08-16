@@ -10,6 +10,9 @@ from rest_framework import filters
 
 from django_filters.rest_framework import DjangoFilterBackend
 
+from drf_spectacular.utils import extend_schema
+from drf_spectacular.openapi import OpenApiParameter
+
 from collector.models import Archive, Ticket, Platform
 
 from .filters import ArchiveFilter, TicketFilter
@@ -30,15 +33,37 @@ class ArchiveViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = ArchiveFilter
 
+    @extend_schema(
+        operation_id='upload_file',
+        request={
+            'multipart/form-data': {
+                'type': 'object',
+                'properties': {
+                    'file': {
+                        'type': 'string',
+                        'format': 'binary'
+                        }
+                    }
+                }
+            },
+        parameters=[
+            OpenApiParameter(
+                    name='Upload-Token',
+                    type=str,
+                    location=OpenApiParameter.HEADER,
+                    description="upload permission token",
+            ),
+        ]
+    )
     def create(self, request, *args, **kwargs):
         # ! upload-token protection:
         upload_token = request.headers.get('upload-token', '')
-        if not request.user.is_authenticated and upload_token:
+        if upload_token:
             try:
                 bound_ticket = Ticket.objects.get(token=upload_token)
                 if bound_ticket.resolved:
                     return Response(
-                        {'error': f'ticket {upload_token} already resolved'},
+                        {'error': f'ticket {bound_ticket} already resolved'},
                         status=status.HTTP_423_LOCKED
                     )
                 if bound_ticket.attempts <= 0:
@@ -51,13 +76,14 @@ class ArchiveViewSet(viewsets.ModelViewSet):
                 # ? mixin bound ticket number to request.data from user
                 request.data['ticket'] = bound_ticket.number
                 # ? change serializer for guest user
-                self.serializer_class = PublicArchiveUploadSerializer
+                if not request.user.is_authenticated:
+                    self.serializer_class = PublicArchiveUploadSerializer
             except (ValidationError, ObjectDoesNotExist,):
                 return Response(
                     {'error': f'token {upload_token} is not valid'},
                     status=status.HTTP_403_FORBIDDEN
                 )
-        elif not request.user.is_authenticated:
+        else:
             return Response(
                 {'error': 'Header Upload-Token is required'},
                 status=status.HTTP_401_UNAUTHORIZED
