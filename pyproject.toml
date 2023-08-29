@@ -19,6 +19,7 @@ markdown = "^3.4.4"
 django-filter = "^23.2"
 drf-spectacular = "^0.26.4"
 django-two-factor-auth = {extras = ["phonenumberslite"], version = "^1.15.3"}
+whitenoise = "^6.5.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.0.0"
