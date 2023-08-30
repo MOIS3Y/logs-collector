@@ -139,12 +139,21 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'archives'
 
-MEDIA_ROOT_FOR_SENSITIVE_FILES = BASE_DIR / 'archives'
-MEDIA_URL_FOR_SENSITIVE_FILES = '/archives/'
-
+STORAGES = {
+    # ...
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": MEDIA_ROOT,
+            "base_url": "/archives/",
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 # django-crispy-forms and crispy-bootstrap5
 # https://django-crispy-forms.readthedocs.io/en/latest/

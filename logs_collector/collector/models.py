@@ -1,35 +1,16 @@
 import uuid
 import hashlib
-from functools import partial
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User
 from django.db import models
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 
 from .utils import logs_dir_path
 
 
-# Create a custom storage location, using a value from your settings file
-sensitive_upload_storage = FileSystemStorage(
-    location=settings.MEDIA_ROOT_FOR_SENSITIVE_FILES,
-    base_url=settings.MEDIA_URL_FOR_SENSITIVE_FILES
-)
-# ... and a file field that will use the custom storage
-AuthenticatedFileField = partial(
-    models.FileField,
-    storage=sensitive_upload_storage
-)
-
-
 class Archive(models.Model):
-    file = AuthenticatedFileField(
-        upload_to=logs_dir_path,
-        blank=True,
-        null=True
-    )
+    file = models.FileField(upload_to=logs_dir_path, blank=True, null=True)
     md5 = models.CharField(max_length=1024, editable=False)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)

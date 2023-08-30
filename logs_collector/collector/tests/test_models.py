@@ -8,7 +8,7 @@ from collector.models import Platform, Ticket, Archive
 
 
 def delete_test_files(ticket):
-    test_file = settings.MEDIA_ROOT_FOR_SENSITIVE_FILES / Path(str(ticket))
+    test_file = settings.MEDIA_ROOT / Path(str(ticket))
     test_file.unlink(missing_ok=True)
 
 
