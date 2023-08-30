@@ -10,7 +10,7 @@ from .utils import logs_dir_path
 
 
 class Archive(models.Model):
-    file = models.FileField(upload_to=logs_dir_path, blank=True, null=True)
+    file = models.FileField(upload_to=logs_dir_path)
     md5 = models.CharField(max_length=1024, editable=False)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
