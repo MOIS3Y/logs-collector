@@ -22,6 +22,10 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
+# https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
 # TODO: required for docker image
 # CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=["*"])
 
