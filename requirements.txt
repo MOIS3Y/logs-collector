@@ -46,6 +46,9 @@ djangorestframework==3.14.0 ; python_version >= "3.10" and python_version < "4.0
 drf-spectacular==0.26.4 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:8f5a8f87353d1bb8dcb3f3909b7109b2dcbe1d91f3e069409cf322963e140bd6 \
     --hash=sha256:afeccc6533dcdb4e78afbfcc49f3c5e9c369aeb62f965e4d1a43b165449c147a
+gunicorn==21.2.0 ; python_version >= "3.10" and python_version < "4.0" \
+    --hash=sha256:3213aa5e8c24949e792bcacfc176fef362e7aac80b76c56f6b5122bf350722f0 \
+    --hash=sha256:88ec8bff1d634f98e61b9f65bc4bf3cd918a90806c6f5c48bc5603849ec81033
 inflection==0.5.1 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417 \
     --hash=sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2
@@ -58,6 +61,9 @@ jsonschema==4.19.0 ; python_version >= "3.10" and python_version < "4.0" \
 markdown==3.4.4 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:225c6123522495d4119a90b3a3ba31a1e87a70369e03f14799ea9c0d7183a3d6 \
     --hash=sha256:a4c1b65c0957b4bd9e7d86ddc7b3c9868fb9670660f6f99f6d1bca8954d5a941
+packaging==23.1 ; python_version >= "3.10" and python_version < "4.0" \
+    --hash=sha256:994793af429502c4ea2ebf6bf664629d07c1a9fe974af92966e4b8d2df7edc61 \
+    --hash=sha256:a392980d2b6cffa644431898be54b0045151319d1e7ec34f0cfed48767dd334f
 phonenumberslite==8.13.19 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:163a18e962e4a29ffd0bd523fa7aa60301bc7aa467bf0383bf3c4dac02097573 \
     --hash=sha256:5d05d0f31f0838b1773c6093925c7c1ab3e98d98747db7c54a9385f8b6df5f71
