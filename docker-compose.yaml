@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  logs_collector:
+    container_name: logs_collector
+    build:
+      context: .
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs_collector/db.sqlite3:/app/db.sqlite3
+      - ./logs_collector/archives:/app/archives
+    env_file:
+      - ./logs_collector/.env
