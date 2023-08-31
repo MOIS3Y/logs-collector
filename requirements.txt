@@ -46,7 +46,7 @@ djangorestframework==3.14.0 ; python_version >= "3.10" and python_version < "4.0
 drf-spectacular==0.26.4 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:8f5a8f87353d1bb8dcb3f3909b7109b2dcbe1d91f3e069409cf322963e140bd6 \
     --hash=sha256:afeccc6533dcdb4e78afbfcc49f3c5e9c369aeb62f965e4d1a43b165449c147a
-gunicorn==21.2.0 ; python_version >= "3.10" and python_version < "4.0" \
+gunicorn[gthread]==21.2.0 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:3213aa5e8c24949e792bcacfc176fef362e7aac80b76c56f6b5122bf350722f0 \
     --hash=sha256:88ec8bff1d634f98e61b9f65bc4bf3cd918a90806c6f5c48bc5603849ec81033
 inflection==0.5.1 ; python_version >= "3.10" and python_version < "4.0" \
