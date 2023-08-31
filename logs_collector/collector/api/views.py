@@ -2,7 +2,11 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from rest_framework import status
 # from rest_framework.decorators import action
-from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.parsers import (
+    FormParser,
+    MultiPartParser,
+    FileUploadParser
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import viewsets
@@ -28,7 +32,7 @@ from .serializers import (
 class ArchiveViewSet(viewsets.ModelViewSet):
     queryset = Archive.objects.order_by('-time_create')
     serializer_class = ArchiveSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, FileUploadParser)
     permission_classes = (IsGuestUpload, )
     filter_backends = [DjangoFilterBackend]
     filterset_class = ArchiveFilter
