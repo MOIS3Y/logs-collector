@@ -20,6 +20,7 @@ $(function () {
             dataType: 'json',
             xhr:function(){
                 const xhr = new window.XMLHttpRequest();
+                xhr.timeout = 3600000; // increase request timeout to 1 hour
                 xhr.upload.addEventListener('progress', e=>{
                     if(e.lengthComputable){
                         const percentProgress = (e.loaded/e.total)*100;
@@ -51,17 +52,17 @@ $(function () {
                 uploadForm.reset()
                 progress_bar.classList.add('not-visible')
             },
-            error: function(data, textStatus, jqXHR){
-                console.log(data.responseJSON.error);
+            error: function(jqXHR, textStatus, errorThrown){
+                console.log(jqXHR);
                 let type = "danger";
                 let error_message = "Unexpected error. Try again please"
-                if (data.status === 423) {
-                    error_message = `Error ${data.status}: ${data.responseJSON.error}`
+                if (jqXHR.status === 423) {
+                    error_message = `Error ${jqXHR.status}: ${jqXHR.responseJSON.error}`
                 }
-                if (data.status === 403) {
-                    error_message = `Error ${data.status}: ${data.responseJSON.error}`
+                if (jqXHR.status === 403) {
+                    error_message = `Error ${jqXHR.status}: ${jqXHR.responseJSON.error}`
                 }
-                if (data.status === 401) {
+                if (jqXHR.status === 401) {
                     error_message = 'The token field cannot be empty'
                 }
                 alert_container.innerHTML = [
