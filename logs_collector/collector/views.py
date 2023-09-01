@@ -78,27 +78,27 @@ class ListAllTickets(LoginRequiredMixin, PageTitleViewMixin, generic.ListView):
 
     def get_queryset(self):
         search_query = self.request.GET.get('search', '')
-        if search_query:
-            query_list = []
-            try:
-                for item in search_query.split(','):
-                    query_list.append(int(item))
-            except ValueError:
-                return super().get_queryset()
-            queryset = self.model.objects.filter(
-                Q(number__in=query_list) | Q(number__icontains=query_list[0])
-            )
+        resolved_status_query = self.request.GET.get('resolved', '')
+        if search_query or resolved_status_query:
             self.paginate_by = 100  # ? fake disable pagination)
+            if search_query:
+                query_list = []
+                try:
+                    for item in search_query.split(','):
+                        query_list.append(int(item))
+                except ValueError:
+                    return super().get_queryset()
+                queryset = self.model.objects.filter(
+                    Q(number__in=query_list) | Q(number__icontains=query_list[0])  # noqa:E501
+                )
+            if resolved_status_query:
+                queryset = self.model.objects.filter(Q(resolved=True))
             return queryset
 
         return super().get_queryset()
 
 
-class ListPlatformTickets(
-        LoginRequiredMixin,
-        PageTitleViewMixin,
-        generic.ListView
-        ):
+class ListPlatformTickets(LoginRequiredMixin, PageTitleViewMixin, generic.ListView):  # noqa:E501
     model = Ticket
     template_name = 'collector/tickets.html'
     context_object_name = 'tickets'

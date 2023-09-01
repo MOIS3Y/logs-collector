@@ -54,6 +54,14 @@
             {% endfor %}
             <li><hr class="dropdown-divider" /></li>
             <li>
+              <a
+                class="dropdown-item {% if request.GET.resolved %}active{% endif %}"
+                href="{% url 'collector:tickets' %}?resolved=true">
+                <i class="bi bi-check-circle"></i> Resolved
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
               <a class="dropdown-item" href="{% url 'collector:tickets' %}">
                 <i class="bi bi-funnel"></i> Reset filter
               </a>
