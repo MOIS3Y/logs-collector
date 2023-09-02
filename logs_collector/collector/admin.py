@@ -1,4 +1,5 @@
 from django.contrib import admin, messages
+from django.db.models import F
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import ngettext
@@ -66,15 +67,20 @@ class ArchiveAdmin(admin.ModelAdmin):
     search_fields = ('ticket',)
     list_filter = ('time_create', 'ticket')
 
+    def get_queryset(self, request):
+        qs = super(ArchiveAdmin, self).get_queryset(request)
+        qs = qs.annotate(file_size=F('size'))
+        return qs
+
     def file_size(self, obj):
-        return sizify(obj.file.size)
+        return sizify(obj.size)
 
     def file_link(self, obj):
         if obj.file:
             file_name = obj.file.name.rpartition('/')[-1]
             file_path = reverse(
                 'collector:download',
-                kwargs={'path': file_name}
+                kwargs={'path': obj.file}
             )
             return format_html(
                 '<a href="{file_path}">{file_name}</a>',
@@ -86,6 +92,7 @@ class ArchiveAdmin(admin.ModelAdmin):
 
     file_link.allow_tags = True
     file_link.short_description = 'File Download'
+    file_size.admin_order_field = 'file_size'
 
 
 admin.site.register(Platform, PlatformAdmin)

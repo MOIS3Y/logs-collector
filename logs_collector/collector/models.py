@@ -11,6 +11,7 @@ from .utils import logs_dir_path
 
 class Archive(models.Model):
     file = models.FileField(upload_to=logs_dir_path)
+    size = models.BigIntegerField(editable=False)
     md5 = models.CharField(max_length=1024, editable=False)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
@@ -22,6 +23,8 @@ class Archive(models.Model):
     )
 
     def save(self, *args, **kwargs):
+        # add file size in bytes
+        self.size = self.file.size
         # calculate md5 hash sum and write md5 field to db
         with self.file.open('rb') as f:
             md5 = hashlib.md5()
