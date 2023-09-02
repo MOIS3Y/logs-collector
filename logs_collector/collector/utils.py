@@ -1,6 +1,3 @@
-import os
-
-
 def logs_dir_path(instance, filename):
     """
         file will be uploaded to
@@ -9,22 +6,25 @@ def logs_dir_path(instance, filename):
     return f'{instance.ticket.number}/{filename}'
 
 
-# deprecated
-def get_file_size(file_path, unit='bytes'):
-    file_size = os.path.getsize(file_path)
-    exponents_map = {'bytes': 0, 'kb': 1, 'mb': 2, 'gb': 3}
-    if unit not in exponents_map:
-        raise ValueError("Must select from \
-        ['bytes', 'kb', 'mb', 'gb']")
+def sizify(value: int) -> str:
+    """Simple kb/mb/gb size snippet for admin panel custom field:
+
+    Args:
+        value (int): size of file from Filefield
+
+    Returns:
+        str: format human readable size like 4.2 Gb
+    """
+    if value < 512000:
+        value = value / 1024.0
+        ext = 'Kb'
+    elif value < 4194304000:
+        value = value / 1048576.0
+        ext = 'Mb'
     else:
-        size = file_size / 1024 ** exponents_map[unit]
-        return round(size, 3)
-
-
-# deprecated
-def is_ajax(request):
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return True
+        value = value / 1073741824.0
+        ext = 'Gb'
+    return f'{round(value, 2)} {ext}'
 
 
 class PageTitleViewMixin:
