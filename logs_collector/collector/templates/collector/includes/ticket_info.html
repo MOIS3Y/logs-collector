@@ -21,6 +21,12 @@
     <span class="input-group-text" id="inputGroup-sizing-sm"><i class="bi bi-key"></i></span>
     <!--Token attempts-->
     <span class="input-group-text" id="inputGroup-sizing-sm">
+      <a 
+        href="{% url 'collector:update' ticket.platform.name ticket.number %}"
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        data-bs-title="Attempts for upload archive"
+      >
       <span
         class="badge
         {% if ticket.attempts <= 0 %}
@@ -31,6 +37,7 @@
           bg-primary
         {% endif %} rounded-pill">{{ ticket.attempts }}
       </span>
+      </a>
     </span>
     <input
       name="ticket-token"
