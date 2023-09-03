@@ -2,9 +2,9 @@
 {% get_platforms as platforms %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container">
-    <a 
-      class="navbar-brand" 
-      href="{% url 'collector:index' %}">Logs Collector <i class="bi bi-file-earmark-zip-fill"></i>
+    <a class="navbar-brand" href="{% url 'collector:index' %}">
+      Logs Collector
+      <i class="bi bi-file-earmark-zip-fill"></i>
     </a>
     <button
       class="navbar-toggler"
@@ -26,22 +26,8 @@
             role="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
-            >Archives</button>
-          <ul class="dropdown-menu">
-            <li>
-              <a class="dropdown-item" href="{% url 'collector:upload' %}">
-                <i class="bi bi-archive"></i> Upload archive
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <button
-            class="nav-link dropdown-toggle"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            >Tickets</button>
+            ><i class="bi bi-filter-circle"></i> Filters
+          </button>
           <ul class="dropdown-menu">
             {% for platform in platforms %}
             <li>
@@ -70,7 +56,13 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" aria-current="page" href="{% url 'collector:create' %}">
-            <i class="bi bi-pencil-square"></i> New
+            <i class="bi bi-pencil-square"></i> Create
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="{% url 'collector:upload' %}">
+            <i class="bi bi-archive"></i>
+            Upload
           </a>
         </li>
       </ul>
@@ -84,6 +76,9 @@
             placeholder="Search"
             aria-label="Search"
             name="search"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
+            data-bs-title="Type the ticket number or comma-separated numbers"
           />
           <button
             class="btn btn-outline-success"
@@ -120,6 +115,10 @@
               <li>
                 <a class="dropdown-item" type="button" href="{% url 'swagger-ui' %}"
                 ><i class="bi bi-braces-asterisk"></i> Swagger</a>
+              </li>
+              <li>
+                <a class="dropdown-item" type="button" href="{% url 'redoc' %}"
+                ><i class="bi bi-file-earmark-medical"></i> Redoc</a>
               </li>
               <li>
                 <a
