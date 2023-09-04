@@ -3,16 +3,22 @@ from pathlib import Path
 from datetime import timedelta
 
 
-env = environ.Env(
-    # set casting default value
-    DEBUG=(bool, False),
-    SECRET_KEY=(str, 'j9QGbvM9Z4otb47')
-)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-environ.Env.read_env(BASE_DIR / '.env')
+# Set default environ variables:
+env = environ.Env(
+    # set casting default value
+    DEBUG=(bool, False),
+    SECRET_KEY=(str, 'j9QGbvM9Z4otb47'),
+    SQLITE_URL=(str, f'sqlite:///{BASE_DIR / "data/db.sqlite3"}'),
+    CSRF_TRUSTED_ORIGINS=(list, []),
+    ALLOWED_HOSTS=(list, ['*']),
+    TZ=(str, 'UTC'),
+)
 
+# Read .env file if exist:
+environ.Env.read_env(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
@@ -20,18 +26,13 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 # https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
 if not DEBUG:
-    CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
-
-# TODO: required for docker image
-# CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=["*"])
-
+    CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS")
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -88,17 +89,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'logs_collector.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
-    'default': env.db_url(
-        'SQLITE_URL',
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}'
-    )
+    'default': env.db_url('SQLITE_URL')
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -118,18 +113,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = env('TZ', default='UTC')
+TIME_ZONE = env('TZ')
 
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -143,15 +136,14 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = BASE_DIR / 'archives'
+MEDIA_ROOT = BASE_DIR / 'data/archives'
 
 STORAGES = {
-    # ...
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
         "OPTIONS": {
             "location": MEDIA_ROOT,
-            "base_url": "/archives/",
+            "base_url": "/download/archives/",
         },
     },
     "staticfiles": {
@@ -162,19 +154,15 @@ STORAGES = {
 # django-crispy-forms and crispy-bootstrap5
 # https://django-crispy-forms.readthedocs.io/en/latest/
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # https://www.django-rest-framework.org/api-guide/settings/
-
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
-        'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework.parsers.MultiPartParser'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -188,9 +176,16 @@ REST_FRAMEWORK = {
     # 'PAGE_SIZE': 3,
 }
 
+if DEBUG:
+    REST_FRAMEWORK.get(
+        'DEFAULT_RENDERER_CLASSES', []
+    ).append('rest_framework.renderers.BrowsableAPIRenderer')
+    REST_FRAMEWORK.get(
+        'DEFAULT_PARSER_CLASSES', []
+    ).append('rest_framework.renderers.BrowsableAPIRenderer')
+
 # https://drf-spectacular.readthedocs.io/en/latest/readme.html
 # TODO: set environ vars config!
-
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Logs collector API',
     'DESCRIPTION': 'Collector of archives with log files for further analysis',
@@ -200,7 +195,6 @@ SPECTACULAR_SETTINGS = {
 }
 
 # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/
-
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
