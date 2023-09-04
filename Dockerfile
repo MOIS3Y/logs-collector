@@ -8,23 +8,56 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=on
 
-# install dependences
+# install app dependences
 COPY requirements.txt ./
 RUN pip install --no-cache-dir --root-user-action=ignore -r requirements.txt
 
-# Now multistage builds
+# now multistage builds
 FROM python:3.10-alpine
 
+# set env variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# default build args
+ARG VERSION=0.1.0 \
+    APP_DIR=/app \
+    SRC_DIR=./logs_collector \
+    SCRIPTS_DIR=./scripts \
+    WEB_PORT=8000 \
+    USER_NAME=collector \
+    USER_GROUP=collector \
+    APP_UID=1000 \
+    APP_GID=1000
+
+# copy app dependences
 COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
 COPY --from=base /usr/local/bin/ /usr/local/bin/
 
+# add curl and createa user to avoid running container as root
+RUN apk add --no-cache --upgrade curl && \
+    addgroup --system ${USER_GROUP} --gid ${APP_GID} && \
+    adduser --system --uid ${APP_UID} --ingroup ${USER_GROUP} ${USER_NAME}
+
+# switch to user
+USER ${USER_NAME}
+
+# copy src and entrypoint.sh to app dir
+COPY --chown=${USER_NAME}:${USER_GROUP} ${SRC_DIR} ${APP_DIR}
+COPY --chown=${USER_NAME}:${USER_GROUP} ${SCRIPTS_DIR}/entrypoint.sh ${APP_DIR}/
+
+# set workdir
+WORKDIR ${APP_DIR}
+
+# app listens on this port by default
+EXPOSE ${WEB_PORT}
+
 # set lables about app
 LABEL maintainer="s.zhukovskii@ispsystem.com"
-LABEL ru.isptech.logs-collector.version=v0.1.0
+LABEL me.zhukovsky.logs-collector.version=v${VERSION}
 
-COPY ./logs_collector /app
-WORKDIR /app
+# call the health check endpoint of app
+HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1
 
-COPY entrypoint.sh ./
-
+# run app
 ENTRYPOINT [ "sh", "entrypoint.sh" ]

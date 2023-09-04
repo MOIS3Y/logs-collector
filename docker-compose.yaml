@@ -1,16 +1,31 @@
-version: "3.7"
+version: "3"
+
+# to set environment variables:
+# create a .env file in the same directory as docker-compose.yaml
 
 services:
   logs_collector:
-    container_name: logs_collector
+    container_name: logs-collector
     build:
       context: .
-    expose:
-      - 8000
+      args:
+        - VERSION=${VERSION}
+        - SRC_DIR=${SRC_DIR}
+        - SCRIPTS_DIR=${SCRIPTS_DIR}
+        - APP_DIR=${APP_DIR}
+        - WEB_PORT=${WEB_PORT}
+        - USER_NAME=${USER_NAME}
+        - USER_GROUP=${USER_GROUP}
+        - APP_UID=${APP_UID}
+        - APP_GID=${APP_GID}
     ports:
-      - "8000:8000"
+      - "${WEB_HOST}:${WEB_PORT}:${WEB_PORT}"
     volumes:
-      - ./logs_collector/db.sqlite3:/app/db.sqlite3
-      - ./logs_collector/archives:/app/archives
+      - type: volume
+        source: logs_collector_data
+        target: ${APP_DIR}/data
     env_file:
-      - ./logs_collector/.env
+      - ./.env
+
+volumes:
+  logs_collector_data:
