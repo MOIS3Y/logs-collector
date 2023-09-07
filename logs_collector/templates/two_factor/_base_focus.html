@@ -1,13 +1,14 @@
 {% extends "two_factor/_base.html" %}
 
 {% block content_wrapper %}
-  <section>
-    <header>
+  <header>
+    <section>
       {% block nav %}{% endblock nav %}
-    </header>
-  </section>
-  <section>
-    <main>
+    </section>
+  </header>
+  
+  <main>
+    <section>
       <div class="container mt-3">
         <div class="card">
           <div class="card-body">
@@ -17,6 +18,11 @@
           </div>
         </div>
       </div>
-    </main>
-  </section>
+    </section>
+  </main>
+  <footer class="footer mt-auto">
+    <section>
+      {% block footer_nav %}{% endblock footer_nav %}
+    </section>
+  </footer>
 {% endblock %}
