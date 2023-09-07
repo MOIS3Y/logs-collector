@@ -2,7 +2,7 @@ import environ
 from pathlib import Path
 from datetime import timedelta
 
-from . import __version__
+from . import __version__, __status__
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(
     # set casting default value
     VERSION=(str, __version__),
-    ENVIRONMENT=(str, 'development'),
+    ENVIRONMENT=(str, __status__),
     DEBUG=(bool, False),
     SECRET_KEY=(str, 'j9QGbvM9Z4otb47'),
     SQLITE_URL=(str, f'sqlite:///{BASE_DIR / "data/db.sqlite3"}'),

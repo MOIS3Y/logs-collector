@@ -1,17 +1,4 @@
-<a
-  class="navbar-brand"
-  href="{% url 'collector:index' %}"
-  data-bs-toggle="tooltip"
-  data-bs-html="true"
-  data-bs-placement="bottom"
-  data-bs-title="
-    Version: {{ version }}
-    <br>
-    {% if environment != production %}
-    Staging: {{ environment|capfirst }}
-    {% endif %}
-  "
->
+<a class="navbar-brand" href="{% url 'collector:index' %}">
   Logs Collector
   <i class="bi bi-file-earmark-zip-fill"></i>
 </a>

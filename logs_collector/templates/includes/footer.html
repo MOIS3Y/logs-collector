@@ -2,7 +2,13 @@
   <div class="container d-flex justify-content-between">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <span class="text-muted">© Created by {{ author }}</span>
+        <span class="text-muted">
+          v{{ version }}
+          {% if environment != 'Production' %}
+            Staging: {{ environment }}
+          {% endif %}
+          | © {{ author }} 
+        </span>
       </li>
     </ul>
     <ul class="navbar-nav">
