@@ -200,7 +200,7 @@ if DEBUG:
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Logs collector API',
     'DESCRIPTION': 'Collector of archives with log files for further analysis',
-    'VERSION': '0.1.0',
+    'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': True,
     'SERVE_PUBLIC': False,
 }

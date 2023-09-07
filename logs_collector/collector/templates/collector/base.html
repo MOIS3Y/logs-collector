@@ -6,7 +6,7 @@
 {% endblock collector_head %}
 
 {% block collector_content %}
-  <header>
+  <header class="sticky-top">
     <section>
       {% include 'includes/navigation.html' %}
     </section>
@@ -16,9 +16,9 @@
       {% block main %}{% endblock main %}
     </section>
   </main>
-  <footer>
+  <footer class="footer mt-auto">
     <section>
-      {% block footer %}{% endblock footer %}
+      {% include 'includes/footer.html' %}
     </section>
   </footer>
 {% endblock collector_content %}
