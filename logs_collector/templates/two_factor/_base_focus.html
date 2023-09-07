@@ -9,8 +9,11 @@
   
   <main>
     <section>
-      <div class="container mt-3">
+      <div class="container mt-3">    
         <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Two-Factor Authentication settings:</h3>
+          </div>
           <div class="card-body">
             <div class="text-center">
               {% block content %}{% endblock %}
@@ -20,6 +23,7 @@
       </div>
     </section>
   </main>
+
   <footer class="footer mt-auto">
     <section>
       {% block footer_nav %}{% endblock footer_nav %}
