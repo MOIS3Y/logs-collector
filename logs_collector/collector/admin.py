@@ -5,7 +5,7 @@ from django.utils.html import format_html
 from django.utils.translation import ngettext
 
 from .models import Platform, Archive, Ticket
-from .utils import sizify
+from .utils.helpers import sizify
 
 
 class PlatformAdmin(admin.ModelAdmin):

@@ -1,3 +1,5 @@
+import {updateStorageInfo} from "./helpers.js";
+
 $(function () {
     const uploadForm = document.getElementById('upload_form');
     const input_file = document.getElementById('id_file');
@@ -6,7 +8,7 @@ $(function () {
     
     $("#upload_form").submit(function(e){
         e.preventDefault();
-        $form = $(this)
+        // $form = $(this)
         let formData = new FormData(this);
         let upload_token = formData.get("token")
         const media_data = input_file.files[0];
@@ -51,6 +53,11 @@ $(function () {
                 ].join('')
                 uploadForm.reset()
                 progress_bar.classList.add('not-visible')
+                try {
+                    updateStorageInfo();
+                } catch (error) {
+                    console.log(error)
+                };
             },
             error: function(jqXHR, textStatus, errorThrown){
                 console.log(jqXHR);

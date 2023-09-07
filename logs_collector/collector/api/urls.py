@@ -18,4 +18,5 @@ router.register(r'tickets', views.TicketViewSet)
 urlpatterns = [
     # CRUD:
     path('v1/', include(router.urls)),
+    path('v1/storage/', views.StorageInfo.as_view(), name='storage-info'),
 ]

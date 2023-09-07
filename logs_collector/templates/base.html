@@ -40,9 +40,12 @@
   <body>
     {% block collector_content %}{% endblock collector_content %}
     {% block account_content %}{% endblock account_content %}
-    
+    <!-- BS dependences JS-->
     <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Theme switcher JS-->
     <script src="{% static '/js/bs.theme.mode.js' %}"></script>
+    <!-- BS tooltip JS-->
+    <script src="{% static '/js/bs.tooltip.js' %}"></script>
     {% block collector_scripts %}{% endblock collector_scripts %}
     {% block account_scripts %}{% endblock account_scripts %}
   </body>

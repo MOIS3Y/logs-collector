@@ -3,25 +3,22 @@ from django.http import FileResponse
 from django.views import generic
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q
-from django.shortcuts import render
 
 from two_factor.views import OTPRequiredMixin
 
 from .forms import TicketForm, ArchiveForm
 from .models import Archive, Ticket
-from .utils import PageTitleViewMixin
+from .utils.mixins import ExtraContextMixin
 
 
-class ArchiveUploadView(PageTitleViewMixin, generic.View):
+class ArchiveUploadView(ExtraContextMixin, generic.TemplateView):
     form_class = ArchiveForm()
-    template = 'collector/archive_upload.html',
+    template_name = 'collector/archive_upload.html'
 
-    def get(self, request):
-        return render(
-            request,
-            self.template,
-            context={'form': self.form_class}
-        )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class
+        return context
 
     def get_title(self):
         return f'{self.title} - upload'
@@ -41,7 +38,7 @@ class ArchiveHandlerView(
         return FileResponse(self.object.file)
 
 
-class CreateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.CreateView):
+class CreateTicket(LoginRequiredMixin, ExtraContextMixin, generic.CreateView):
     model = Ticket
     form_class = TicketForm
     template_name = 'collector/ticket_create.html'
@@ -54,7 +51,7 @@ class CreateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-class UpdateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.UpdateView):
+class UpdateTicket(LoginRequiredMixin, ExtraContextMixin, generic.UpdateView):
     model = Ticket
     form_class = TicketForm
     template_name = 'collector/ticket_create.html'
@@ -69,7 +66,7 @@ class UpdateTicket(LoginRequiredMixin, PageTitleViewMixin, generic.UpdateView):
         return super().form_valid(form)
 
 
-class ListAllTickets(LoginRequiredMixin, PageTitleViewMixin, generic.ListView):
+class ListAllTickets(LoginRequiredMixin, ExtraContextMixin, generic.ListView):
     model = Ticket
     template_name = 'collector/tickets.html'
     context_object_name = 'tickets'
@@ -98,7 +95,7 @@ class ListAllTickets(LoginRequiredMixin, PageTitleViewMixin, generic.ListView):
         return super().get_queryset()
 
 
-class ListPlatformTickets(LoginRequiredMixin, PageTitleViewMixin, generic.ListView):  # noqa:E501
+class ListPlatformTickets(LoginRequiredMixin, ExtraContextMixin, generic.ListView):  # noqa:E501
     model = Ticket
     template_name = 'collector/tickets.html'
     context_object_name = 'tickets'
@@ -114,7 +111,7 @@ class ListPlatformTickets(LoginRequiredMixin, PageTitleViewMixin, generic.ListVi
         )
 
 
-class DetailTicket(LoginRequiredMixin, PageTitleViewMixin, generic.DetailView):
+class DetailTicket(LoginRequiredMixin, ExtraContextMixin, generic.DetailView):
     model = Ticket
     template_name = 'collector/ticket.html'
     context_object_name = 'ticket'

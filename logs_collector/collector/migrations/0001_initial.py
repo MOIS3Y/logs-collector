@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
             name='Archive',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(upload_to=collector.utils.logs_dir_path)),
+                ('file', models.FileField(upload_to=collector.utils.helpers.logs_dir_path)),
                 ('size', models.BigIntegerField(editable=False)),
                 ('md5', models.CharField(editable=False, max_length=1024)),
                 ('time_create', models.DateTimeField(auto_now_add=True)),

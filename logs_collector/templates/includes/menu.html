@@ -1,0 +1,47 @@
+{% load collector_extras %}
+{% get_platforms as platforms %}
+<li class="nav-item dropdown">
+  <button
+    class="nav-link dropdown-toggle"
+    role="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    ><i class="bi bi-filter-circle"></i> Tickets
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <a class="dropdown-item" aria-current="page" href="{% url 'collector:create' %}">
+        <i class="bi bi-pencil-square"></i> Create ticket
+      </a>
+    </li>
+    <li><hr class="dropdown-divider" /></li>
+      <a class="dropdown-item" aria-current="page" href="{% url 'collector:upload' %}">
+        <i class="bi bi-archive"></i>
+        Upload archive
+      </a>
+    <li><hr class="dropdown-divider" /></li>
+    {% for platform in platforms %}
+    <li>
+      <a
+        class="dropdown-item {% if request.resolver_match.kwargs.platform == platform.name %}active{% endif %}"
+        href="{{ platform.get_absolute_url }}"
+        >{{ platform.pretty_name}}
+      </a>
+    </li>
+    {% endfor %}
+    <li><hr class="dropdown-divider" /></li>
+    <li>
+      <a
+        class="dropdown-item {% if request.GET.resolved %}active{% endif %}"
+        href="{% url 'collector:tickets' %}?resolved=true">
+        <i class="bi bi-check-circle"></i> Resolved
+      </a>
+    </li>
+    <li><hr class="dropdown-divider" /></li>
+    <li>
+      <a class="dropdown-item" href="{% url 'collector:tickets' %}">
+        <i class="bi bi-funnel"></i> Reset filter
+      </a>
+    </li>
+  </ul>
+</li>

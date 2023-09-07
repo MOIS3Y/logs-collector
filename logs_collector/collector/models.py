@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
-from .utils import logs_dir_path
+from .utils.helpers import logs_dir_path
 
 
 class Archive(models.Model):

@@ -1,3 +1,6 @@
+import {updateStorageInfo} from "./helpers.js";
+
+
 $(function () {
     console.log("JQ is ready to work");
 
@@ -24,8 +27,11 @@ $(function () {
             success: function (data, textStatus, jqXHR) {
                 console.log(jqXHR.status);
                 $(archiveListElement).hide(1500);
+                setTimeout(() => {
+                    updateStorageInfo();
+                }, 3000);
             },
-            error: function (data, textStatus, jqXHR) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.status);
             }
         });
@@ -57,7 +63,7 @@ $(function () {
             success: function (data, textStatus, jqXHR) {
                 console.log(jqXHR.status)
             },
-            error: function (data, textStatus, jqXHR) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 console.log(data)
                 console.log(jqXHR.status)
             }
@@ -82,11 +88,14 @@ $(function () {
                 console.log(jqXHR.status);
                 if (delDiv.length) {
                     delDiv.hide(1500);
+                    setTimeout(() => {
+                        updateStorageInfo();
+                    }, 3000);
                 } else {
                     window.location.href = redirectUrl;
                 }
             },
-            error: function (data, textStatus, jqXHR) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.status);
             }
         });

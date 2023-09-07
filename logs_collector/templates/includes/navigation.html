@@ -1,157 +1,22 @@
-{% load collector_extras %}
-{% get_platforms as platforms %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container">
-    <a class="navbar-brand" href="{% url 'collector:index' %}">
-      Logs Collector
-      <i class="bi bi-file-earmark-zip-fill"></i>
-    </a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Переключатель навигации"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <!--Brand logo -->
+    {% include 'includes/brand.html' %}
+    <!-- Left fields -->
     {% if request.user.is_authenticated %}
     <div class="collapse navbar-collapse" id="navbarSupportedContent">   
       <ul class="navbar-nav ml-auto mb-2 mb-lg-0 me-md-auto">
-        <li class="nav-item dropdown">
-          <button
-            class="nav-link dropdown-toggle"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            ><i class="bi bi-filter-circle"></i> Filters
-          </button>
-          <ul class="dropdown-menu">
-            {% for platform in platforms %}
-            <li>
-              <a
-                class="dropdown-item {% if request.resolver_match.kwargs.platform == platform.name %}active{% endif %}"
-                href="{{ platform.get_absolute_url }}"
-                >{{ platform.pretty_name}}
-              </a>
-            </li>
-            {% endfor %}
-            <li><hr class="dropdown-divider" /></li>
-            <li>
-              <a
-                class="dropdown-item {% if request.GET.resolved %}active{% endif %}"
-                href="{% url 'collector:tickets' %}?resolved=true">
-                <i class="bi bi-check-circle"></i> Resolved
-              </a>
-            </li>
-            <li><hr class="dropdown-divider" /></li>
-            <li>
-              <a class="dropdown-item" href="{% url 'collector:tickets' %}">
-                <i class="bi bi-funnel"></i> Reset filter
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="{% url 'collector:create' %}">
-            <i class="bi bi-pencil-square"></i> Create
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="{% url 'collector:upload' %}">
-            <i class="bi bi-archive"></i>
-            Upload
-          </a>
-        </li>
+        <!-- Menu -->
+        {% include 'includes/menu.html' %}
+        <!-- Storage -->
+        {% include 'includes/storage.html' %}
       </ul>
       <!-- Search -->
-      <ul class="navbar-nav flex-row flex-wrap me-md-auto">
-        <li class="nav-item py-2 col-12 col-lg-auto">
-        <form class="d-flex" role="search" action="{% url 'collector:tickets' %}">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-            name="search"
-            data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
-            data-bs-title="Type the ticket number or comma-separated numbers"
-          />
-          <button
-            class="btn btn-outline-success"
-            type="submit">
-              <i class="bi bi-search"></i>
-          </button>
-        </form>
-        </li>
-      </ul>
+      {% include 'includes/search.html' %}
       <!-- Right fields -->
       <ul class="navbar-nav flex-row flex-wrap ms-md-auto">
         <!-- User settings -->
-        {% if request.user.is_authenticated %}
-        <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
-          <div class="btn-group">
-            <button type="button" class="btn btn-outline-secondary">
-              <i class="bi bi-person-square"></i> {{ request.user }}
-            </button>
-            <button 
-              type="button"
-              class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <span class="visually-hidden">Toggle Dropdown</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              {% if request.user.is_staff %}
-              <li>
-                <a class="dropdown-item" type="button" href="{% url 'admin:index' %}"
-                ><i class="bi bi-shield-shaded"></i> Admin</a>
-              </li>
-              {% endif %}
-              <li>
-                <a class="dropdown-item" type="button" href="{% url 'swagger-ui' %}"
-                ><i class="bi bi-braces-asterisk"></i> Swagger</a>
-              </li>
-              <li>
-                <a class="dropdown-item" type="button" href="{% url 'redoc' %}"
-                ><i class="bi bi-file-earmark-medical"></i> Redoc</a>
-              </li>
-              <li>
-                <a
-                  href="{% url 'two_factor:profile' %}"
-                  class="dropdown-item"
-                  type="button">
-                    <i class="bi bi-gear"></i> Settings
-                </a>
-              </li>
-              <li><hr class="dropdown-divider" /></li>
-              <li>
-                <a
-                  href="{% url 'account:logout' %}"
-                  class="dropdown-item"
-                  type="button"><i class="bi bi-door-closed"></i> Logout
-                </a>
-              </li>           
-            </ul>
-          </div>              
-        </li>
-        {% else %}
-        <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
-          <div class="btn-group">
-            <a
-              type="button"
-              href="{% url 'two_factor:login' %}"
-              class="btn btn-outline-secondary"
-            >
-              <i class="bi bi-box-arrow-in-right"></i></i> Login
-            </a>
-          </div>              
-        </li>    
-        {% endif %}
+        {% include 'includes/extra_menu.html' %}
         <!-- Separator -->
         <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
           <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-white"></div>

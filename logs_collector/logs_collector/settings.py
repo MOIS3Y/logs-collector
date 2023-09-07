@@ -2,6 +2,7 @@ import environ
 from pathlib import Path
 from datetime import timedelta
 
+from . import __version__
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,6 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Set default environ variables:
 env = environ.Env(
     # set casting default value
+    VERSION=(str, __version__),
+    ENVIRONMENT=(str, 'development'),
     DEBUG=(bool, False),
     SECRET_KEY=(str, 'j9QGbvM9Z4otb47'),
     SQLITE_URL=(str, f'sqlite:///{BASE_DIR / "data/db.sqlite3"}'),
@@ -19,6 +22,9 @@ env = environ.Env(
 
 # Read .env file if exist:
 environ.Env.read_env(BASE_DIR / '.env')
+
+VERSION = env('VERSION')
+ENVIRONMENT = env('ENVIRONMENT')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
@@ -78,10 +84,14 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                # default:
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # collector:
+                'collector.context_processors.metadata',
+                'collector.context_processors.storage_info',
             ],
         },
     },
@@ -174,6 +184,7 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # noqa:E501
     # 'PAGE_SIZE': 3,
+    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
 }
 
 if DEBUG:

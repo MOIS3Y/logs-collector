@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.conf import settings
 
 from rest_framework import status
 # from rest_framework.decorators import action
@@ -10,6 +11,7 @@ from rest_framework.parsers import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework import views
 from rest_framework import filters
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -18,6 +20,7 @@ from drf_spectacular.utils import extend_schema
 from drf_spectacular.openapi import OpenApiParameter
 
 from collector.models import Archive, Ticket, Platform
+from collector.utils.helpers import get_mount_fs_info
 
 from .filters import ArchiveFilter, TicketFilter
 from .permissions import IsGuestUpload
@@ -122,3 +125,10 @@ class TicketViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class StorageInfo(views.APIView):
+    """Info about storage total/used/free space"""
+
+    def get(self, request):
+        return Response(get_mount_fs_info(settings.MEDIA_ROOT))
