@@ -163,6 +163,9 @@ class TicketViewSet(viewsets.ModelViewSet):
 
 class StorageInfo(views.APIView):
     """Info about storage total/used/free space"""
+
+    permission_classes = (IsAuthenticated, )
+
     @extend_schema(
         responses=StorageInfoSerializer,
         summary='Show storage space in bytes'
