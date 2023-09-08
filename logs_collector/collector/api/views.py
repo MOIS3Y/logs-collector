@@ -16,7 +16,7 @@ from rest_framework import filters
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from drf_spectacular.openapi import OpenApiParameter
 
 from collector.models import Archive, Ticket, Platform
@@ -33,6 +33,17 @@ from .serializers import (
 )
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description='Archives that contains log files for checking',
+        summary='Show all archives'
+    ),
+    create=extend_schema(summary='Create (upload) a new archive'),
+    retrieve=extend_schema(summary='Show archive by id'),
+    update=extend_schema(summary='Update archive'),
+    partial_update=extend_schema(summary='Update archive field'),
+    destroy=extend_schema(summary='Delete archive'),
+)
 class ArchiveViewSet(viewsets.ModelViewSet):
     queryset = Archive.objects.order_by('-time_create')
     serializer_class = ArchiveSerializer
@@ -56,10 +67,10 @@ class ArchiveViewSet(viewsets.ModelViewSet):
             },
         parameters=[
             OpenApiParameter(
-                    name='Upload-Token',
-                    type=str,
-                    location=OpenApiParameter.HEADER,
-                    description="upload permission token",
+                name='Upload-Token',
+                type=str,
+                location=OpenApiParameter.HEADER,
+                description="upload permission token",
             ),
         ]
     )
@@ -108,6 +119,17 @@ class ArchiveViewSet(viewsets.ModelViewSet):
         )
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description='Platforms are needed to relative the ticket and software',
+        summary='Show all platforms'
+    ),
+    create=extend_schema(summary='Create a new platform'),
+    retrieve=extend_schema(summary='Show platform by internal name'),
+    update=extend_schema(summary='Update platform'),
+    partial_update=extend_schema(summary='Update platform field'),
+    destroy=extend_schema(summary='Delete platform'),
+)
 class PlatformViewSet(viewsets.ModelViewSet):
     queryset = Platform.objects.all()
     lookup_field = 'name'
@@ -115,6 +137,17 @@ class PlatformViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description='Tickets that will be related with the uploaded archive',
+        summary='Show all tickets'
+    ),
+    create=extend_schema(summary='Create a new ticket'),
+    retrieve=extend_schema(summary='Show ticket by number'),
+    update=extend_schema(summary='Update ticket'),
+    partial_update=extend_schema(summary='Update ticket field'),
+    destroy=extend_schema(summary='Delete ticket'),
+)
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.order_by('-time_create')
     lookup_field = 'number'
@@ -130,6 +163,9 @@ class TicketViewSet(viewsets.ModelViewSet):
 
 class StorageInfo(views.APIView):
     """Info about storage total/used/free space"""
-    @extend_schema(responses=StorageInfoSerializer)
+    @extend_schema(
+        responses=StorageInfoSerializer,
+        summary='Show storage space in bytes'
+    )
     def get(self, request):
         return Response(get_mount_fs_info(settings.MEDIA_ROOT))

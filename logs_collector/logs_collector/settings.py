@@ -203,6 +203,9 @@ SPECTACULAR_SETTINGS = {
     'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': True,
     'SERVE_PUBLIC': False,
+    "SWAGGER_UI_SETTINGS": {
+        "filter": True,
+    },
 }
 
 # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/
