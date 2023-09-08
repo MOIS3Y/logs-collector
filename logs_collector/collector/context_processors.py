@@ -13,4 +13,4 @@ def metadata(request):
 
 
 def storage_info(request):
-    return get_mount_fs_info(settings.MEDIA_ROOT)
+    return {'storage': get_mount_fs_info(settings.MEDIA_ROOT)}

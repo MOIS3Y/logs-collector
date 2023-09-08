@@ -35,4 +35,4 @@ def get_mount_fs_info(path):
     mount_info['used_percent'] = round(
         mount_info['used'] / mount_info['total'] * 100
     )
-    return {'storage': mount_info}
+    return mount_info

@@ -6,13 +6,13 @@ from drf_spectacular.openapi import OpenApiTypes
 from collector.models import Archive, Platform, Ticket
 
 
-@extend_schema_field(OpenApiTypes.NUMBER)
+@extend_schema_field(OpenApiTypes.INT)
 class TimestampField(serializers.Field):
     def to_representation(self, value) -> int:
         return value.timestamp()
 
 
-@extend_schema_field(OpenApiTypes.NUMBER)
+@extend_schema_field(OpenApiTypes.INT)
 class JsTimestampField(serializers.Field):
     def to_representation(self, value) -> int:
         return round(value.timestamp()*1000)
@@ -26,7 +26,7 @@ class PublicArchiveUploadSerializer(serializers.ModelSerializer):
 
 
 class ArchiveSerializer(serializers.ModelSerializer):
-    time_create = JsTimestampField(read_only=True)
+    time_create = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Archive
@@ -41,8 +41,8 @@ class PlatformSerializer(serializers.ModelSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
-    time_create = JsTimestampField(read_only=True)
-    time_update = JsTimestampField(read_only=True)
+    time_create = serializers.DateTimeField(read_only=True)
+    time_update = serializers.DateTimeField(read_only=True)
     token = serializers.UUIDField(read_only=True)
     user = serializers.ReadOnlyField(source='user.username')
 
@@ -59,3 +59,10 @@ class TicketSerializer(serializers.ModelSerializer):
             'time_update',
             'user'
         ]
+
+
+class StorageInfoSerializer(serializers.Serializer):
+    total = serializers.IntegerField(read_only=True)
+    used = serializers.IntegerField(read_only=True)
+    free = serializers.IntegerField(read_only=True)
+    used_percent = serializers.IntegerField(read_only=True)

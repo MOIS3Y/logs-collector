@@ -28,7 +28,8 @@ from .serializers import (
     PublicArchiveUploadSerializer,
     ArchiveSerializer,
     PlatformSerializer,
-    TicketSerializer
+    TicketSerializer,
+    StorageInfoSerializer,
 )
 
 
@@ -129,6 +130,6 @@ class TicketViewSet(viewsets.ModelViewSet):
 
 class StorageInfo(views.APIView):
     """Info about storage total/used/free space"""
-
+    @extend_schema(responses=StorageInfoSerializer)
     def get(self, request):
         return Response(get_mount_fs_info(settings.MEDIA_ROOT))

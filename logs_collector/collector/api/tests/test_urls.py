@@ -29,3 +29,7 @@ class TestUrls(TestCase):
     def test_detail_platform_url_is_resolved(self):
         url = reverse('collector_api:platform-detail', args=['vm6'])
         self.assertEquals(resolve(url).func.cls, views.PlatformViewSet)
+
+    def test_storage_info_url_is_resolved(self):
+        url = reverse('collector_api:storage-info')
+        self.assertEquals(resolve(url).func.cls, views.StorageInfo)

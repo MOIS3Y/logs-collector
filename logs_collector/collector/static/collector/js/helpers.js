@@ -38,7 +38,7 @@ const updateStorageInfo = () => {
         dataType: "json",
         success: function (data, textStatus, jqXHR) {
             // JSON answer:
-            let storage = data.storage
+            let storage = data;
             // set updated fields:
             let storageInfoNewFields = [
                 `Total: ${sizify(storage.total)}`,
