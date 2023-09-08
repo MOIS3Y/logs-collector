@@ -57,7 +57,7 @@ LABEL maintainer="s.zhukovskii@ispsystem.com"
 LABEL me.zhukovsky.logs-collector.version=v${VERSION}
 
 # call the health check endpoint of app
-HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1
+HEALTHCHECK CMD curl --fail http://localhost:${WEB_PORT} || exit 1
 
 # run app
 ENTRYPOINT [ "sh", "entrypoint.sh" ]
