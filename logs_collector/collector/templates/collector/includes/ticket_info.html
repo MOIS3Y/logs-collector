@@ -1,9 +1,9 @@
 <div class="d-sm-flex w-100 justify-content-between mb-2">
-  <h4 class="card-title mb-1">Ticket: {{ ticket.number }}</h4>
+  <h4 class="card-title mb-1"><i class="bi bi-bookmarks"></i> Ticket: {{ ticket.number }}</h4>
   <small><i class="bi bi-clock-history"></i> {{ ticket.time_create|date:"D d.m.y H:i" }}</small>
 </div>
-<div class="form-check form-switch form-check-reverse d-flex w-100 justify-content-left">
-  <label class="form-check-label" for="ticket-state">Resolved:</label>
+<div class="form-check form-switch form-check-reverse d-flex w-100 justify-content-left mb-2">
+  <label class="form-check-label" for="ticket-state"><i class="bi bi-award"></i> Resolved:</label>
   <input 
     class="form-check-input ms-2 mb-2"
     type="checkbox"
@@ -14,8 +14,18 @@
     {% if ticket.resolved %} checked {% endif %}>
 </div>
 <div class="col-xl-6 mb-2">
-  <h6 class="card-title mb-1">Platform: {{ ticket.platform.pretty_name }}</h6>
-  <h6 class="card-title mb-3">Owner: {{ ticket.user.username }}</h6>
+  <h6 class="card-title mb-1">
+    <small class="me-1"><i class="bi bi-box"></i></small>
+    Platform: {{ ticket.platform.pretty_name }}
+  </h6>
+  <h6 class="card-title mb-1">
+    <small class="me-1"><i class="bi bi-person-circle"></i></small>
+    User: {{ ticket.user.username }}
+  </h6>
+  <h6 class="card-title mb-3">
+    <small class="me-1"><i class="bi bi-clock-history"></i></small>
+    Last modified: {{ ticket.time_update|date:"d.m.y H:i" }}
+  </h6>
   <!-- Token -->
   <div class="input-group input-group mb-3">
     <span class="input-group-text" id="inputGroup-sizing-sm"><i class="bi bi-key"></i></span>
