@@ -31,7 +31,6 @@ class UserProfileForm(forms.ModelForm):
                 ),
                 PrependedText('first_name', 'First name:'),
                 PrependedText('last_name', 'Last name:'),
-                css_class='col-lg-6'
             ),
             Submit('submit', 'Save', css_class='btn btn-primary'),
         )
