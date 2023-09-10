@@ -1,0 +1,17 @@
+{% extends 'account/base.html' %}
+{% load static %}
+{% block title %} {{ title }} {% endblock title %}
+{% block main %}
+<div class="container mt-3">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Account:</h3>
+      </div>
+      <div class="card-body">
+        {% block profile_info %}{% endblock profile_info %}
+        {% block profile_update %}{% endblock profile_update %}
+        {% block password_change %}{% endblock password_change %}
+      </div>
+    </div>
+</div>
+{% endblock main %}

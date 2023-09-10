@@ -1,9 +1,13 @@
 {% if request.user.is_authenticated %}
   <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
     <div class="btn-group">
-      <button type="button" class="btn btn-outline-secondary">
-        <i class="bi bi-person-square"></i> {{ request.user }}
-      </button>
+      <a
+        type="button"
+        class="btn btn-outline-secondary"
+        href="{% url 'account:show_profile' %}"
+      >
+      <i class="bi bi-person-circle"></i> {{ request.user }}
+      </a>
       <button 
         type="button"
         class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
@@ -24,7 +28,7 @@
             href="{% url 'two_factor:profile' %}"
             class="dropdown-item"
             type="button">
-              <i class="bi bi-gear"></i> Settings
+            <i class="bi bi-dice-5"></i> 2FA
           </a>
         </li>
         <li><hr class="dropdown-divider" /></li>

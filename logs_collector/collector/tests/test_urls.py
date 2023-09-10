@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import resolve, reverse
-from django.contrib.auth.models import User
+
+from account.models import User
 
 from collector import views
 from collector.models import Ticket, Platform

@@ -252,3 +252,6 @@ SIMPLE_JWT = {
 LOGIN_URL = 'two_factor:login'
 LOGIN_REDIRECT_URL = 'collector:index'
 LOGOUT_REDIRECT_URL = 'two_factor:login'
+
+# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-user-model
+AUTH_USER_MODEL = 'account.User'

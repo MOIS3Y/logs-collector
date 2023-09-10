@@ -1,11 +1,12 @@
 from pathlib import Path
 from django.core.files.base import ContentFile
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.urls import reverse
 
 from rest_framework import status
 from rest_framework.test import APITestCase
+
+from account.models import User
 
 from collector.models import Archive, Platform, Ticket
 

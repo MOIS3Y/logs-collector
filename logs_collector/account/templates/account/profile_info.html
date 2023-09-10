@@ -1,0 +1,7 @@
+{% extends 'account/profile.html' %}
+{% load static %}
+{% block profile_info %}
+  {% block profile_alerts %}{% endblock profile_alerts %}
+  {% include 'account/includes/auth_credentials.html' %}
+  {% include 'account/includes/profile_credentials.html' %}
+{% endblock profile_info %}

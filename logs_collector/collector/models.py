@@ -2,9 +2,10 @@ import uuid
 import hashlib
 
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+
+from account.models import User
 
 from .utils.helpers import logs_dir_path
 

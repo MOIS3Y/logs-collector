@@ -1,9 +1,9 @@
 from pathlib import Path
 from django.test import TestCase
-from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.conf import settings
 
+from account.models import User
 from collector.models import Platform, Ticket, Archive
 
 
