@@ -66,3 +66,4 @@ class StorageInfoSerializer(serializers.Serializer):
     used = serializers.IntegerField(read_only=True)
     free = serializers.IntegerField(read_only=True)
     used_percent = serializers.IntegerField(read_only=True)
+    status = serializers.CharField(read_only=True)

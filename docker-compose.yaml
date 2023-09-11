@@ -13,6 +13,7 @@ services:
         - SRC_DIR=${SRC_DIR}
         - SCRIPTS_DIR=${SCRIPTS_DIR}
         - APP_DIR=${APP_DIR}
+        - DATA_DIR=${DATA_DIR}
         - WEB_PORT=${WEB_PORT}
         - USER_NAME=${USER_NAME}
         - USER_GROUP=${USER_GROUP}

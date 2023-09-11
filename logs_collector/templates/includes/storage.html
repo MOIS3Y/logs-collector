@@ -5,8 +5,18 @@
       class="nav-link me-1 bi bi-sd-card"
       aria-current="page"
       data-bs-toggle="tooltip"
+      data-bs-html="true"
       data-bs-placement="bottom"
-      data-bs-title="Storage used: {{ storage.used_percent }}%"
+      data-bs-title="
+        <span><u>STORAGE</u><span>
+        <br>
+        Used: {{ storage.used_percent }}%
+        <br>
+        Status:
+          <span class={% if storage.status == 'error' %}text-danger{% else %}text-success{% endif %}>
+            {{ storage.status }}
+          <span>
+      "
     >
     </i>
     <div

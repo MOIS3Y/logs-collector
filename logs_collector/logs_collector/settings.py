@@ -4,8 +4,18 @@ from datetime import timedelta
 
 from . import __version__, __status__
 
+
+# █▀█ █▀█ █▀█ ▀█▀ ▀
+# █▀▄ █▄█ █▄█ ░█░ ▄
+# -- -- -- -- -- --
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# █▀▀ █▄░█ █░█ ▀
+# ██▄ █░▀█ ▀▄▀ ▄
+# -- -- -- -- --
 
 # Set default environ variables:
 env = environ.Env(
@@ -14,7 +24,7 @@ env = environ.Env(
     ENVIRONMENT=(str, __status__),
     DEBUG=(bool, False),
     SECRET_KEY=(str, 'j9QGbvM9Z4otb47'),
-    SQLITE_URL=(str, f'sqlite:///{BASE_DIR / "data/db.sqlite3"}'),
+    DATA_DIR=(str, BASE_DIR / 'data'),
     CSRF_TRUSTED_ORIGINS=(list, []),
     ALLOWED_HOSTS=(list, ['*']),
     TZ=(str, 'UTC'),
@@ -23,7 +33,13 @@ env = environ.Env(
 # Read .env file if exist:
 environ.Env.read_env(BASE_DIR / '.env')
 
+
+# █▀▀ █▀█ █▀█ █▀▀ ▀
+# █▄▄ █▄█ █▀▄ ██▄ ▄
+# -- -- -- -- -- -
+
 VERSION = env('VERSION')
+
 ENVIRONMENT = env('ENVIRONMENT')
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -99,12 +115,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'logs_collector.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-DATABASES = {
-    'default': env.db_url('SQLITE_URL')
-}
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -134,6 +144,11 @@ USE_I18N = True
 
 USE_TZ = True
 
+
+# █▀ ▀█▀ ▄▀█ ▀█▀ █ █▀▀ ▀
+# ▄█ ░█░ █▀█ ░█░ █ █▄▄ ▄
+# -- -- -- -- -- -- -- -
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 # Whitenoise:
@@ -141,12 +156,19 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# █▀▄ ▄▀█ ▀█▀ ▄▀█ ▀
+# █▄▀ █▀█ ░█░ █▀█ ▄
+# -- -- -- -- -- --
 
-MEDIA_ROOT = BASE_DIR / 'data/archives'
+# Build paths inside the project for db and storage.
+DATA_DIR = Path(env('DATA_DIR'))
+
+# Create DATA_DIR ignore if exist:
+Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
+
+# Custom file storage path
+MEDIA_ROOT = DATA_DIR / 'archives'
 
 STORAGES = {
     "default": {
@@ -160,6 +182,29 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+
+# █▀▄ ▄▀█ ▀█▀ ▄▀█ █▄▄ ▄▀█ █▀ █▀▀ ▀
+# █▄▀ █▀█ ░█░ █▀█ █▄█ █▀█ ▄█ ██▄ ▄
+# -- -- -- -- -- -- -- -- -- -- --
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+DATABASES = {
+    'default': env.db_url(
+        'DB_URL',
+        default=f'sqlite:///{DATA_DIR / "db.sqlite3"}'
+    )
+}
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# █▀▀ ▀▄▀ ▀█▀ █▀▀ █▄░█ ▀█▀ █ █▀█ █▄░█ █▀ ▀
+# ██▄ █░█ ░█░ ██▄ █░▀█ ░█░ █ █▄█ █░▀█ ▄█ ▄
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -
 
 # django-crispy-forms and crispy-bootstrap5
 # https://django-crispy-forms.readthedocs.io/en/latest/
@@ -196,7 +241,6 @@ if DEBUG:
     ).append('rest_framework.renderers.BrowsableAPIRenderer')
 
 # https://drf-spectacular.readthedocs.io/en/latest/readme.html
-# TODO: set environ vars config!
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Logs collector API',
     'DESCRIPTION': 'Collector of archives with log files for further analysis',
@@ -248,6 +292,11 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",  # noqa:E501
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",  # noqa:E501
 }
+
+
+# ▄▀█ █░█ ▀█▀ █░█ ▀
+# █▀█ █▄█ ░█░ █▀█ ▄
+# -- -- -- -- -- --
 
 LOGIN_URL = 'two_factor:login'
 LOGIN_REDIRECT_URL = 'collector:index'

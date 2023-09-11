@@ -171,4 +171,4 @@ class StorageInfo(views.APIView):
         summary='Show storage space in bytes'
     )
     def get(self, request):
-        return Response(get_mount_fs_info(settings.MEDIA_ROOT))
+        return Response(get_mount_fs_info(settings.DATA_DIR))

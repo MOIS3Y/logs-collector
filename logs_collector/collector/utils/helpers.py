@@ -1,7 +1,8 @@
 import shutil
+import pathlib
 
 
-def logs_dir_path(instance, filename):
+def logs_dir_path(instance, filename: str) -> str:
     """
         file will be uploaded to
         MEDIA_ROOT/view/<filename>
@@ -30,9 +31,31 @@ def sizify(value: int) -> str:
     return f'{round(value, 1)} {ext}'
 
 
-def get_mount_fs_info(path):
-    mount_info = shutil.disk_usage(path)._asdict()
-    mount_info['used_percent'] = round(
-        mount_info['used'] / mount_info['total'] * 100
-    )
+def get_mount_fs_info(path: type[pathlib.PosixPath]) -> dict:
+    """
+        Get directory information for storing uploaded files.
+        Includes information total/used/free space on mount device
+
+    Args:
+        path (pathlib.PosixPath): path to storage dir
+
+    Returns:
+        dict: storage mount info
+    """
+    mount_info: dict = {}
+    try:
+        mount_info = shutil.disk_usage(path)._asdict()
+        mount_info['used_percent'] = round(
+            mount_info['used'] / mount_info['total'] * 100,
+        )
+        mount_info['status'] = 'mount'
+    except Exception as error:  # expected FileNotFoundError
+        mount_info = {
+            'total': 0,
+            'used': 0,
+            'free': 0,
+            'used_percent': 0,
+            'status': 'error',
+            'traceback': f'{error}'
+        }
     return mount_info
