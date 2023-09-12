@@ -24,7 +24,7 @@ env = environ.Env(
     ENVIRONMENT=(str, __status__),
     DEBUG=(bool, False),
     SECRET_KEY=(str, 'j9QGbvM9Z4otb47'),
-    DATA_DIR=(str, BASE_DIR / 'data'),
+    DATA_DIR=(Path, BASE_DIR / 'data'),
     CSRF_TRUSTED_ORIGINS=(list, []),
     ALLOWED_HOSTS=(list, ['*']),
     TZ=(str, 'UTC'),
@@ -162,7 +162,7 @@ STATIC_ROOT = BASE_DIR / 'static'
 # -- -- -- -- -- --
 
 # Build paths inside the project for db and storage.
-DATA_DIR = Path(env('DATA_DIR'))
+DATA_DIR = env('DATA_DIR')
 
 # Create DATA_DIR ignore if exist:
 Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
