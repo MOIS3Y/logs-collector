@@ -29,7 +29,8 @@ ARG VERSION=0.1.0 \
     USER_NAME=collector \
     USER_GROUP=collector \
     APP_UID=1000 \
-    APP_GID=1000
+    APP_GID=1000 \
+    HEALTHCHECK_PATH=api/v1/check/health/
 
 # copy app dependences
 COPY --from=base /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
@@ -61,7 +62,7 @@ LABEL maintainer="s.zhukovskii@ispsystem.com"
 LABEL me.zhukovsky.logs-collector.version=v${VERSION}
 
 # call the health check endpoint of app
-HEALTHCHECK CMD curl --fail http://localhost:${WEB_PORT} || exit 1
+HEALTHCHECK CMD curl --fail http://localhost:${WEB_PORT}/${HEALTHCHECK_PATH} || exit 1
 
 # run app
 ENTRYPOINT [ "sh", "entrypoint.sh" ]

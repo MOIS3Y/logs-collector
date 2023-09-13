@@ -35,7 +35,8 @@
           <div
             id="progress"
             upload-url="{% url 'collector_api:archive-list' %}"
-            class="progress"
+            token-status-url="{% url 'collector_api:token-root' %}"
+            class="progress not-visible"
             role="progressbar"
             aria-label="Example 20px high"
             aria-valuenow="25"

@@ -1,88 +1,139 @@
-import {updateStorageInfo} from "./helpers.js";
+import {updateStorageInfo, genAlertMessage} from "./helpers.js";
 
 $(function () {
+    // set global variables:
     const uploadForm = document.getElementById('upload_form');
-    const input_file = document.getElementById('id_file');
-    const progress_bar = document.getElementById('progress');
-    const alert_container = document.getElementById('alert');
-    
+    const inputFile = document.getElementById('id_file');
+    const progressBar = document.getElementById('progress');
+    const alertContainer = document.getElementById('alert');
+    // get upload form:
     $("#upload_form").submit(function(e){
         e.preventDefault();
-        // $form = $(this)
+        // collect request data:
         let formData = new FormData(this);
-        let upload_token = formData.get("token")
-        const media_data = input_file.files[0];
-        if(media_data != null){
-            progress_bar.classList.remove("not-visible");
-        }
-        $.ajax({
-            type: 'POST',
-            url: progress_bar.getAttribute("upload-url"),
-            data: formData,
-            dataType: 'json',
-            xhr:function(){
-                const xhr = new window.XMLHttpRequest();
-                xhr.timeout = 3600000; // increase request timeout to 1 hour
-                xhr.upload.addEventListener('progress', e=>{
-                    if(e.lengthComputable){
-                        const percentProgress = (e.loaded/e.total)*100;
-                        console.log(percentProgress);
-                        progress_bar.innerHTML = `
-                        <div
-                            class="progress-bar progress-bar-striped progress-bar-animated"
-                            style="width: ${percentProgress}%"
-                        >
-                        </div>`
+        let uploadToken = formData.get("token")
+        // generate the URL for token validation:
+        let tokenStatusUrl = [
+            progressBar.getAttribute('token-status-url'),
+            uploadToken
+        ].join('')
+        // init upload file func:
+        const uploadFile = () => {
+            // toggle visible progress bar:
+            const mediaData = inputFile.files[0];
+            if(mediaData != null){
+                progressBar.classList.remove("not-visible");
+            }
+            // upload file (chunk) xrh request:
+            $.ajax({
+                type: 'POST',
+                url: progressBar.getAttribute("upload-url"),
+                data: formData,
+                dataType: 'json',
+                xhr:function(){
+                    const xhr = new window.XMLHttpRequest();
+                    xhr.timeout = 3600000; // increase request timeout to 1 hour
+                    xhr.upload.addEventListener('progress', e=>{
+                        if(e.lengthComputable){
+                            const percentProgress = (e.loaded/e.total)*100;
+                            console.log(percentProgress);
+                            progressBar.innerHTML = `
+                            <div
+                                class="progress-bar progress-bar-striped progress-bar-animated"
+                                style="width: ${percentProgress}%"
+                            >
+                            </div>`
+                        }
+                    });
+                    return xhr
+                },
+                // set auth method:
+                beforeSend: function(xhr) {
+                    if (uploadToken) {
+                        xhr.setRequestHeader("Upload-Token", uploadToken);
                     }
-                });
-                return xhr
-            },
-            beforeSend: function(xhr) {
-                if (upload_token) {
-                    xhr.setRequestHeader("Upload-Token", upload_token);
+                },
+                success: function(data, textStatus, jqXHR){
+                    console.log(jqXHR.status);
+                    alertContainer.innerHTML = genAlertMessage(
+                        'The file has been successfully uploaded to the server. Thank you!',
+                        'success',
+                        'col-lg-6'
+                    )
+                    uploadForm.reset()
+                    progressBar.classList.add('not-visible')
+                    try {
+                        updateStorageInfo();
+                    } catch (error) {
+                        console.log(error)
+                    };
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    console.log(jqXHR);
+                    let errorMessage = "Unexpected error. Try again please"
+                    if (jqXHR.status === 423 || jqXHR.status === 403) {
+                        errorMessage = `Error ${jqXHR.status}: ${jqXHR.responseJSON.error}`
+                    }
+                    if (jqXHR.status === 401) {
+                        errorMessage = 'The token field cannot be empty'
+                    }
+                    alertContainer.innerHTML = genAlertMessage(
+                        errorMessage,
+                        'danger',
+                        'col-lg-6'
+                    )
+                    progressBar.classList.add('not-visible')
+                },
+                cache: false,
+                contentType: false,
+                processData: false,
+            });
+        }
+        // check token status and upload file if token valid:
+        $.ajax({
+            type: 'GET',
+            url: tokenStatusUrl,
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+                if (data.attempts === 0) {
+                    alertContainer.innerHTML = genAlertMessage(
+                        `Token: ${uploadToken} expired`,
+                        'danger',
+                        'col-lg-6'
+                    );
                 }
-            },
-            success: function(data, textStatus, jqXHR){
-                console.log(jqXHR.status);
-                let type = "success";
-                alert_container.innerHTML = [
-                    `<div class="alert alert-${type} alert-dismissible col-lg-6" role="alert">`,
-                    `   <div>The file has been successfully uploaded to the server. Thank you!</div>`,
-                    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-                    '</div>'
-                ].join('')
-                uploadForm.reset()
-                progress_bar.classList.add('not-visible')
-                try {
-                    updateStorageInfo();
-                } catch (error) {
-                    console.log(error)
+                else if (data.resolved === true) {
+                    alertContainer.innerHTML = genAlertMessage(
+                        `Ticket bound with token: ${uploadToken} <br> already resolved`,
+                        'danger',
+                        'col-lg-6'
+                    );
+                } else {
+                    alertContainer.innerHTML = genAlertMessage(
+                        `Token: ${uploadToken} is valid. <br> Starting to upload...`,
+                        'success',
+                        'col-lg-6'
+                    );
+                    uploadFile();
                 };
             },
-            error: function(jqXHR, textStatus, errorThrown){
-                console.log(jqXHR);
-                let type = "danger";
-                let error_message = "Unexpected error. Try again please"
-                if (jqXHR.status === 423) {
-                    error_message = `Error ${jqXHR.status}: ${jqXHR.responseJSON.error}`
+            error: function(jqXHR){
+                console.log(jqXHR)
+                console.log(jqXHR.responseJSON.detail)
+                if (jqXHR.responseJSON.detail) {
+                    alertContainer.innerHTML = genAlertMessage(
+                        `Token: ${uploadToken} is not valid`,
+                        'danger',
+                        'col-lg-6'
+                    )
+                } else {
+                    alertContainer.innerHTML = genAlertMessage(
+                        `Unexpected error. Try again please`,
+                        'danger',
+                        'col-lg-6'
+                    )
                 }
-                if (jqXHR.status === 403) {
-                    error_message = `Error ${jqXHR.status}: ${jqXHR.responseJSON.error}`
-                }
-                if (jqXHR.status === 401) {
-                    error_message = 'The token field cannot be empty'
-                }
-                alert_container.innerHTML = [
-                    `<div class="alert alert-${type} alert-dismissible col-lg-6" role="alert">`,
-                    `   <div>${error_message}</div>`,
-                    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-                    '</div>'
-                ].join('')
-                progress_bar.classList.add('not-visible')
             },
-            cache: false,
-            contentType: false,
-            processData: false,
         });
     });
 });

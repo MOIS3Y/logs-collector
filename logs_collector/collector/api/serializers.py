@@ -67,3 +67,25 @@ class StorageInfoSerializer(serializers.Serializer):
     free = serializers.IntegerField(read_only=True)
     used_percent = serializers.IntegerField(read_only=True)
     status = serializers.CharField(read_only=True)
+
+
+class TokenStateRootSerializer(serializers.Serializer):
+    info = serializers.CharField(read_only=True, default="manual message")
+
+
+class TokenStateSerializer(serializers.ModelSerializer):
+    token = serializers.UUIDField(read_only=True)
+    attempts = serializers.IntegerField(read_only=True)
+    resolved = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Ticket
+        fields = [
+            'token',
+            'attempts',
+            'resolved'
+        ]
+
+
+class AppHealthInfoSerializer(serializers.Serializer):
+    status = serializers.CharField(read_only=True, default="ok")

@@ -66,4 +66,18 @@ const updateStorageInfo = () => {
     });
 };
 
-export {sizify, updateBsTooltip, updateStorageInfo};
+const genAlertMessage = (
+        alertMessage='Success message',
+        alertType='success',
+        extraClass=''
+        ) => {
+    let alertMessageHTML = [
+        `<div class="alert alert-${alertType} alert-dismissible ${extraClass}" role="alert">`,
+        `   <div>${alertMessage}</div>`,
+        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+        '</div>'
+    ].join('')
+    return alertMessageHTML
+}
+
+export {sizify, updateBsTooltip, updateStorageInfo, genAlertMessage};

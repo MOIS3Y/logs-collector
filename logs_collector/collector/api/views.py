@@ -10,9 +10,7 @@ from rest_framework.parsers import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import viewsets
-from rest_framework import views
-from rest_framework import filters
+from rest_framework import filters, generics, views, viewsets
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -23,13 +21,16 @@ from collector.models import Archive, Ticket, Platform
 from collector.utils.helpers import get_mount_fs_info
 
 from .filters import ArchiveFilter, TicketFilter
-from .permissions import IsGuestUpload
+from .permissions import IsGuestUpload, IsGuestCheckUrls
 from .serializers import (
     PublicArchiveUploadSerializer,
     ArchiveSerializer,
     PlatformSerializer,
     TicketSerializer,
     StorageInfoSerializer,
+    TokenStateSerializer,
+    AppHealthInfoSerializer,
+    TokenStateRootSerializer,
 )
 
 
@@ -172,3 +173,40 @@ class StorageInfo(views.APIView):
     )
     def get(self, request):
         return Response(get_mount_fs_info(settings.DATA_DIR))
+
+
+class TokenStateRoot(views.APIView):
+    """ Show the message of a specific upload token URL"""
+    permission_classes = (IsGuestCheckUrls,)
+
+    @extend_schema(
+        responses=TokenStateRootSerializer,
+        summary='Show info message how get token status'
+    )
+    def get(self, request):
+        message = "to find out the status of the token, place it in the URL"
+        return Response({"detail": message}, status=status.HTTP_303_SEE_OTHER)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary='Show the status of a specific upload token'
+    )
+)
+class TokenStateInfo(generics.RetrieveAPIView):
+    """ Show the status of a specific upload token"""
+    queryset = Ticket.objects.order_by('-time_create')
+    lookup_field = 'token'
+    serializer_class = TokenStateSerializer
+    permission_classes = (IsGuestCheckUrls,)
+
+
+class AppHealthInfo(views.APIView):
+    permission_classes = (IsGuestCheckUrls,)
+
+    @extend_schema(
+        responses=AppHealthInfoSerializer,
+        summary='Show app status'
+    )
+    def get(self, request):
+        return Response({'status': 'ok'}, status=status.HTTP_200_OK)
