@@ -83,29 +83,35 @@ class ArchiveViewSet(viewsets.ModelViewSet):
                 bound_ticket = Ticket.objects.get(token=upload_token)
                 if bound_ticket.resolved:
                     return Response(
-                        {'error': f'ticket {bound_ticket} already resolved'},
+                        {'detail': f'ticket {bound_ticket} already resolved'},
                         status=status.HTTP_423_LOCKED
                     )
                 if bound_ticket.attempts <= 0:
                     return Response(
-                        {'error': f'token {upload_token} expired'},
+                        {'detail': f'token {upload_token} expired'},
                         status=status.HTTP_423_LOCKED
                     )
                 bound_ticket.attempts -= 1
                 bound_ticket.save()
                 # ? mixin bound ticket number to request.data from user
-                request.data['ticket'] = bound_ticket.number
+                try:
+                    request.data['ticket'] = bound_ticket.number
+                except AttributeError:
+                    return Response(
+                        {'detail': 'Bad Request'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
                 # ? change serializer for guest user
                 if not request.user.is_authenticated:
                     self.serializer_class = PublicArchiveUploadSerializer
             except (ValidationError, ObjectDoesNotExist,):
                 return Response(
-                    {'error': f'token {upload_token} is not valid'},
+                    {'detail': f'token {upload_token} is not valid'},
                     status=status.HTTP_403_FORBIDDEN
                 )
         else:
             return Response(
-                {'error': 'Header Upload-Token is required'},
+                {'detail': 'Header Upload-Token is required'},
                 status=status.HTTP_401_UNAUTHORIZED
             )
         # ! default create method:

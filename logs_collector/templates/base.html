@@ -34,10 +34,12 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     >
+    {% block errors_head %}{% endblock errors_head %}
     {% block collector_head %}{% endblock collector_head %}
     {% block account_head %}{% endblock account_head %}
   </head>
   <body class="d-flex flex-column min-vh-100">
+    {% block http_errors %}{% endblock http_errors %}
     {% block collector_content %}{% endblock collector_content %}
     {% block account_content %}{% endblock account_content %}
     <!-- BS dependences JS-->

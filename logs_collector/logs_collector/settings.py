@@ -89,6 +89,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'collector.middleware.HttpResponseNotAllowedMiddleware',
 ]
 
 ROOT_URLCONF = 'logs_collector.urls'

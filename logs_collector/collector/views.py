@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 from django.views import generic
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q
@@ -35,6 +35,10 @@ class ArchiveHandlerView(
 
     def get(self, request, path):
         self.object = self.get_object()
+        try:
+            self.object.file.size
+        except FileNotFoundError:
+            raise Http404(f'File: {self.object.file} not found')
         return FileResponse(self.object.file)
 
 

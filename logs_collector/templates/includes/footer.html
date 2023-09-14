@@ -1,21 +1,29 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container d-flex justify-content-between">
+  <div class="container">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <span class="text-muted">
+        <button class="btn">
           v{{ version }}
           {% if environment != 'Production' %}
             Staging: {{ environment }}
           {% endif %}
-          | © {{ author }} 
-        </span>
+        </button>
+      </li>
+      <!-- Separator -->
+      <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
+        <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-white"></div>
+        <hr class="d-lg-none my-2 text-white-50">
+      </li>
+      <li class="nav-item">
+        <button class='btn'> © {{ author }} </button>
       </li>
     </ul>
+    {% if request.user.is_authenticated %}
     <ul class="navbar-nav">
       <li class="nav-item">
         <li>
           <a
-            class="nav-link"
+            class="btn"
             type="button"
             href="{% url 'swagger-ui' %}"
             target="_blank"
@@ -28,5 +36,6 @@
         </a>
       </li>
     </ul>
+    {% endif %}
   </div>
 </nav>

@@ -54,7 +54,6 @@ $(function () {
                     }
                 },
                 success: function(data, textStatus, jqXHR){
-                    console.log(jqXHR.status);
                     alertContainer.innerHTML = genAlertMessage(
                         'The file has been successfully uploaded to the server. Thank you!',
                         'success',
@@ -69,13 +68,15 @@ $(function () {
                     };
                 },
                 error: function(jqXHR, textStatus, errorThrown){
-                    console.log(jqXHR);
                     let errorMessage = "Unexpected error. Try again please"
                     if (jqXHR.status === 423 || jqXHR.status === 403) {
-                        errorMessage = `Error ${jqXHR.status}: ${jqXHR.responseJSON.error}`
+                        errorMessage = `Error ${jqXHR.status} <br> ${jqXHR.responseJSON.detail}`
                     }
                     if (jqXHR.status === 401) {
-                        errorMessage = 'The token field cannot be empty'
+                        errorMessage = `Error ${jqXHR.status} <br> The token field cannot be empty`
+                    }
+                    if (jqXHR.status === 400) {
+                        errorMessage = `Error ${jqXHR.status} <br> ${jqXHR.responseJSON.detail}`
                     }
                     alertContainer.innerHTML = genAlertMessage(
                         errorMessage,
@@ -97,14 +98,14 @@ $(function () {
             success: function (data, textStatus, jqXHR) {
                 if (data.attempts === 0) {
                     alertContainer.innerHTML = genAlertMessage(
-                        `Token: ${uploadToken} expired`,
+                        `Error 423 <br> Token: ${uploadToken} expired`,
                         'danger',
                         'col-lg-6'
                     );
                 }
                 else if (data.resolved === true) {
                     alertContainer.innerHTML = genAlertMessage(
-                        `Ticket bound with token: ${uploadToken} <br> already resolved`,
+                        `Error 423 <br> Ticket bound with token: ${uploadToken} <br> already resolved`,
                         'danger',
                         'col-lg-6'
                     );
@@ -118,11 +119,9 @@ $(function () {
                 };
             },
             error: function(jqXHR){
-                console.log(jqXHR)
-                console.log(jqXHR.responseJSON.detail)
                 if (jqXHR.responseJSON.detail) {
                     alertContainer.innerHTML = genAlertMessage(
-                        `Token: ${uploadToken} is not valid`,
+                        `Error 403 <br> Token: ${uploadToken} is not valid`,
                         'danger',
                         'col-lg-6'
                     )

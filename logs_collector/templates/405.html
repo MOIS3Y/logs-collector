@@ -1,0 +1,14 @@
+{% extends 'errors.html' %}
+{% load static %}
+
+{% block title %} Logs Collector - Method not allowed {% endblock title %}
+
+{% block status_code %}405{% endblock status_code %}
+{% block error_message %}
+<p class="fs-3"> <span class="text-danger">Opps!</span> Method not allowed</p>
+<p class="lead">
+  Request method: 
+  <span class="text-danger">{{ request.method }}</span> 
+  isn't allowed for this URL
+</p>
+{% endblock error_message %}

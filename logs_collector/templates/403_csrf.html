@@ -1,0 +1,10 @@
+{% extends 'errors.html' %}
+{% load static %}
+
+{% block title %} Logs Collector - CSRF error {% endblock title %}
+
+{% block status_code %}403{% endblock status_code %}
+{% block error_message %}
+<p class="fs-3"> <span class="text-danger">Opps!</span> CSRF verification failed.</p>
+<p class="lead">Request aborted</p>
+{% endblock error_message %}

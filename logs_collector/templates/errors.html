@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block errors_head %}
+  <title>{% block title %}{% endblock title %}</title>
+{% endblock errors_head %}
+
+{% block http_errors %}
+<div class="d-flex align-items-center justify-content-center vh-100" >
+  <div class="text-center">
+      <h1 class="display-1 fw-bold">{% block status_code %}{% endblock status_code %}</h1>
+      {% block error_message %}{% endblock error_message %}
+      <a href="{% url 'collector:index' %}" class="btn btn-secondary">Go Home</a>
+  </div>
+  <!-- Theme switcher -->
+  <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+    {% include 'includes/theme_switcher.html' %}
+  </div>
+</div>
+{% endblock http_errors %}
