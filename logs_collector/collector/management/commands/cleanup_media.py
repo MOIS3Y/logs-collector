@@ -1,9 +1,35 @@
 import os
+import logging
 from django.core.management.base import BaseCommand
 from django.apps import apps
 from django.db.models import Q
 from django.conf import settings
 from django.db.models import FileField
+
+
+logger = logging.getLogger(__name__)
+
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console'
+        },
+    },
+    'loggers': {
+        '': {
+            'level': 'INFO',
+            'handlers': ['console']
+        }
+    }
+})
 
 
 class Command(BaseCommand):
@@ -14,10 +40,12 @@ class Command(BaseCommand):
     help = f'{help_part1} {help_part2} {help_part3}'
 
     def handle(self, *args, **options):
+        logger.info('Start cleanup storage....')
         all_models = apps.get_models()
         physical_files = set()
         db_files = set()
         # Get all files from the database
+        logger.info('Get all files from the database....')
         for model in all_models:
             file_fields = []
             filters = Q()
@@ -35,7 +63,9 @@ class Command(BaseCommand):
                     flat=True
                 ).distinct()
                 db_files.update(files)
+        logger.info(f'Find: {len(db_files)} files from the database')
         # Get all files from the MEDIA_ROOT, recursively
+        logger.info('Get all files from the MEDIA_ROOT, recursively....')
         media_root = getattr(settings, 'MEDIA_ROOT', None)
         if media_root is not None:
             for relative_root, dirs, files in os.walk(media_root):
@@ -46,14 +76,21 @@ class Command(BaseCommand):
                         os.path.relpath(relative_root, media_root), file_
                     )
                     physical_files.add(relative_file)
+        logger.info(f'Find: {len(physical_files)} files from the MEDIA_ROOT')
         # Compute the difference and delete those files
+        logger.info('Compute the difference and delete those files....')
         deletables = physical_files - db_files
+        logger.info(f'Find: {len(deletables)} orphan files')
         if deletables:
             for file_ in deletables:
+                logger.info(f"Delete orphan file: {file_}")
                 os.remove(os.path.join(media_root, file_))
             # Bottom-up - delete all empty folders
+            logger.info('Bottom-up - delete all empty folders....')
             for relative_root, dirs, files in os.walk(
                     media_root, topdown=False):
                 for dir_ in dirs:
                     if not os.listdir(os.path.join(relative_root, dir_)):
                         os.rmdir(os.path.join(relative_root, dir_))
+            logger.info('Done! Storage has been cleaned up')
+        logger.info('Done! Nothing to delete')
