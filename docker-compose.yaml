@@ -27,6 +27,12 @@ services:
         target: ${APP_DIR}/data
     env_file:
       - ./.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://${WEB_HOST}:${WEB_PORT}/${HEALTHCHECK_URL}"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   logs_collector_data:
