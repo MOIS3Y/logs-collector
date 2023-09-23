@@ -2,13 +2,15 @@
 
 
 # INIT GLOBAL VARIABLES:
-_VERSION="0.1.0"
-_PACKGMGR="apt yum"
+_VERSION="0.1.1"
+_PKGMGR="apt yum"
 _SCRIPT_NAME="$0"
 _CMD="curl"
 _FILE=""
 _TOKEN=""
-_URL=""
+_DST=""
+_PROTO="https://"
+_API_PATH="/api/v1/archives/"
 
 
 # Colorize output
@@ -42,30 +44,32 @@ check_util_exists() {
 
 # Print help message how used it script
 help() {
+	# colorize value
 	local script=$(colorize GREEN "$_SCRIPT_NAME")
 	local required=$(colorize RED "required")
+	# help message
 	printf "Usage: $script [options [parameters]]\n"
 	printf "\n"
 	printf "Options:\n"
 	printf "\n"
 	printf " -f | --file     full path to upload file $required\n"
 	printf " -t | --token    access token             $required\n"
-	printf " -u | --url      target url               $required\n"
+	printf " -d | --dst      storage domain name      $required\n"
 	printf " -v | --version  print version\n"
 	printf " -h | --help     print help\n"
 }
 
 
-# parse user arguments
-argparser() {
-	# count user-passed arguments:
-	local count_arguments=$#
+# parse user options
+optparser() {
+	# count user-passed options:
+	local count_options=$#
 	# run help if empty and exit:
-	if [[ count_arguments -eq 0 ]]; then
+	if [[ count_options -eq 0 ]]; then
 		help
 		exit 2
 	fi
-	# parse args:
+	# parse opts:
 	while [ ! -z "$1" ]; do
 		case "$1" in
 			--file|-f)
@@ -76,9 +80,9 @@ argparser() {
 				shift
 				_TOKEN="$1"
 				;;
-			--url|-u)
+			--dst|-d)
 				shift
-				_URL="$1"
+				_DST="$1"
 				;;
 			--help|-h)
 				help
@@ -102,12 +106,13 @@ argparser() {
 curl_is_exists() {
 	if ! check_util_exists $_CMD; then
 		local error_cmd=$(colorize RED "$_CMD")
+		local script=$(colorize GREEN "$_SCRIPT_NAME")
 		printf  "$(colorize RED "ERROR"): upload util doesn't exist, "
-		printf	"please install $error_cmd before run $_SCRIPT_NAME\n"
+		printf	"please install $error_cmd before run $script\n"
 		# Print how install curl (support only apt/yum):
-		for pkgmgr in $_PACKGMGR; do
+		for pkgmgr in $_PKGMGR; do
 			if check_util_exists $pkgmgr; then
-				printf "$(colorize GREEN "RUN"): $pkgmgr install $error_cmd"
+				printf "$(colorize GREEN "RUN"): $pkgmgr install $error_cmd\n"
 			fi
 		done
 		exit 1
@@ -115,17 +120,17 @@ curl_is_exists() {
 }
 
 
-validate_args() {
-	if [[ -z $_URL ]]; then
-		printf "$(colorize RED "ERROR"): -u | --url argument is required\n"
+validate_opts() {
+	if [[ -z $_DST ]]; then
+		printf "$(colorize RED "ERROR"): -d | --dst option is required\n"
 		exit 1
 	fi
 	if [[ -z $_FILE ]]; then
-		printf "$(colorize RED "ERROR"): -f | --file argument is required\n"
+		printf "$(colorize RED "ERROR"): -f | --file option is required\n"
 		exit 1
 	fi
 	if [[ -z $_TOKEN ]]; then
-		printf "$(colorize RED "ERROR"): -t | --token argument is required\n"
+		printf "$(colorize RED "ERROR"): -t | --token option is required\n"
 		exit 1
 	fi
 }
@@ -134,12 +139,12 @@ validate_args() {
 # Upload file used curl
 # get $_URL $_FILE $_TOKEN
 upload() {
-	local url=$1
+	local dst=$1
 	local file=$2
 	local token=$3
 	# run:
 	curl --progress-bar -X 'POST' \
-		"${url}" \
+		"${_PROTO}${dst}${_API_PATH}" \
 		-H 'accept: application/json' \
 		-H "Upload-Token: ${token} " \
 		-H 'Content-Type: multipart/form-data' \
@@ -148,10 +153,10 @@ upload() {
 
 
 main () {
-	argparser $@
+	optparser $@
 	curl_is_exists
-	validate_args
-	upload $_URL $_FILE $_TOKEN	
+	validate_opts
+	upload $_DST $_FILE $_TOKEN	
 }
 
 
