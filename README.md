@@ -316,13 +316,20 @@ Options:
 
  -f | --file     full path to upload file required
  -t | --token    access token             required
- -u | --url      target url               required
+ -d | --dst      storage domain name      required
  -v | --version  print version
  -h | --help     print help
 ```
 
 
+#### Example:
 
+```sh
+./uploader.sh \
+    --dst collector.domain.zone \
+    --token e63268f4-5946-42eb-a678-b02182f14e87 \
+    --file /root/logs/all-logs.tar.gz 
+```
 
 ## License
 
